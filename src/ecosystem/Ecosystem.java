@@ -431,7 +431,9 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
 			this.start();
 		} else if(e.getSource() == changeViewBtn) {
 			OBJ_RATIO = (QUARTER_VIEW = !QUARTER_VIEW) ? (float)(Math.sqrt(2) / 2) : 1.0f;
-			repaint();
+			if(THREAD == null) {
+				repaint();
+			}
 		}
 	}
 	
