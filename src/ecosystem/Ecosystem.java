@@ -185,24 +185,42 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
 		int dy = e.getY() - mousePressedY;
 		if(!QUARTER_VIEW) {
 			// 2D
-			int diffHeight = STAGE_HEIGHT - this.getHeight() + GRAPH_HEIGHT;	// 動ける範囲
-			if((Stage.yPoints_2d[0] < 0 && dy > 0) || (Stage.yPoints_2d[2] > diffHeight && dy < 0)) {
+			if((Stage.yPoints_2d[0] < 0 && dy > 0) || (Stage.yPoints_2d[2] > this.getHeight() - GRAPH_HEIGHT && dy < 0)) {
 				Stage.OFFSET.y += dy;
 				
 				// 行き過ぎを止める
+				int minOffsetY = this.getHeight() - STAGE_HEIGHT - GRAPH_HEIGHT;
 				if(Stage.OFFSET.y > 0) {
 					Stage.OFFSET.y = 0;
-				} else if(Stage.OFFSET.y < -diffHeight) {
-					Stage.OFFSET.y = -diffHeight;
+				} else if(Stage.OFFSET.y < minOffsetY) {
+					Stage.OFFSET.y = minOffsetY;
 				}
 			}
 		} else {
 			// クォータービュー
 			if((Stage.xPoints_qv[3] < 0 && dx > 0) || (Stage.xPoints_qv[1] > STAGE_WIDTH && dx < 0)) {
 				Stage.QUARTER_OFFSET.x += dx;
+				
+				// 行き過ぎを止める
+				int diffX = Stage.xPoints_qv[0] - Stage.xPoints_qv[3];
+				int minOffsetX = STAGE_WIDTH - (Stage.xPoints_qv[1] - Stage.xPoints_qv[0]);
+				if(Stage.QUARTER_OFFSET.x > diffX) {
+					Stage.QUARTER_OFFSET.x = diffX;
+				} else if(Stage.QUARTER_OFFSET.x < minOffsetX) {
+					Stage.QUARTER_OFFSET.x = minOffsetX;
+				}
 			}
-			if((Stage.yPoints_qv[0] < 0 && dy > 0) || (Stage.yPoints_qv[2] > FRAME_HEIGHT / 2 && dy < 0)) {
+			
+			if((Stage.yPoints_qv[0] < 0 && dy > 0) || (Stage.yPoints_qv[2] > this.getHeight() - GRAPH_HEIGHT && dy < 0)) {
 				Stage.QUARTER_OFFSET.y += dy;
+				
+				// 行き過ぎを止める
+				int minOffsetY = this.getHeight() - (Stage.yPoints_qv[2] - Stage.yPoints_qv[0]) - GRAPH_HEIGHT;
+				if(Stage.QUARTER_OFFSET.y > 0) {
+					Stage.QUARTER_OFFSET.y = 0;
+				} else if(Stage.QUARTER_OFFSET.y < minOffsetY) {
+					Stage.QUARTER_OFFSET.y = minOffsetY;
+				}
 			}
 		}
 		mousePressedX = e.getX();
@@ -510,9 +528,9 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
 	public static void main(String[] args) {
 		// TODO 自動生成されたメソッド・スタブ
 		// フルスピードモード
-		// 2Dでステージ移動
 		// 植物が端にある時、草食動物がはまる
 		// 草食動物が四隅に追い詰められる
+		// mouseWheelMovedのmin, maxの境界で1回無駄に拡大縮小してしまう問題
 		new Ecosystem();
 	}
 
