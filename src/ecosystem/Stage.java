@@ -8,11 +8,18 @@ public class Stage {
 	// クォータービューオフセット
 	public static Point2D.Float QUARTER_OFFSET;
 	
+	// 2Dオフセット
+	public static Point2D.Float OFFSET;
+	
 	// 座標配列
 	private static final int[] xPoints = new int[4];
 	private static final int[] yPoints = new int[4];
+	
+	// オフセット込みの座標配列
 	public static final int[] xPoints_qv = new int[4];
 	public static final int[] yPoints_qv = new int[4];
+	public static final int[] xPoints_2d = new int[4];
+	public static final int[] yPoints_2d = new int[4];
 	
 	// ステージカラー
 	private static final Color col = new Color(255, 255, 196);
@@ -29,6 +36,7 @@ public class Stage {
 	 * @param stageHeight ステージ高さ
 	 */
 	public Stage(int startX, int startY, int stageWidth, int stageHeight) {
+		OFFSET = new Point2D.Float(0.0f, 0.0f);
 		QUARTER_OFFSET = new Point2D.Float(stageWidth / 2, Ecosystem.GRAPH_HEIGHT);
 		
 		// 左上
@@ -77,8 +85,8 @@ public class Stage {
 	 */
 	public Point2D.Float get2DPoint(float x, float y) {
 		Point2D.Float point = new Point2D.Float();
-		point.x = x;
-		point.y = y;
+		point.x = x + OFFSET.x;
+		point.y = y + OFFSET.y;
 		return point;
 	}
 	
@@ -114,14 +122,20 @@ public class Stage {
 	 * @param g Graphicsオブジェクト
 	 */
 	public void draw(Graphics g) {
+		Point2D.Float point;
 		g.setColor(col);
 		if(!Ecosystem.QUARTER_VIEW) {
 			// 2D
-			g.fillPolygon(xPoints, yPoints, 4);
+			for(int i = 0; i < 4; i++) {
+				point = this.get2DPoint(xPoints[i], yPoints[i]);
+				xPoints_2d[i] = (int)point.x;
+				yPoints_2d[i] = (int)point.y;
+			}
+			g.fillPolygon(xPoints_2d, yPoints_2d, 4);
 		} else {
 			// クォータービュー
 			for(int i = 0; i < 4; i++){
-				Point2D.Float point = this.getQuarterPoint(xPoints[i], yPoints[i]);
+				point = this.getQuarterPoint(xPoints[i], yPoints[i]);
 				xPoints_qv[i] = (int)point.x;
 				yPoints_qv[i] = (int)point.y;
 			}
