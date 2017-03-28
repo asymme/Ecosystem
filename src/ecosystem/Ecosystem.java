@@ -250,8 +250,8 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
 			OBJ_RATIO = min;
 		}
 		
-		// (yPoints_qv[1] ～ QUARTER_OFFSET.y) と baseY の差分がオフセットとなる
-		Stage.QUARTER_OFFSET.y += Stage.baseY - Stage.yPoints_qv[1];
+		// 中心から拡大縮小する
+		Stage.QUARTER_OFFSET.y += this.getHeight() / 2 - Stage.yPoints_qv[1];
 		
 		if(THREAD == null) {
 			// スタート前
@@ -532,7 +532,6 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
 		// フルスピードモード
 		// 植物が端にある時、草食動物がはまる
 		// 草食動物が四隅に追い詰められる
-		// mouseWheelMovedのmin, maxの境界で1回無駄に拡大縮小してしまう問題
 		new Ecosystem();
 	}
 

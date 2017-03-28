@@ -24,10 +24,6 @@ public class Stage {
 	// ステージカラー
 	private static final Color col = new Color(255, 255, 196);
 	
-	// 基準オフセットY座標
-	public static int baseLX, baseRX;
-	public static int baseX, baseY;
-	
 	/**
 	 * 地面オブジェクト
 	 * @param startX 左上X座標
@@ -59,10 +55,6 @@ public class Stage {
 			xPoints_qv[i] = (int)point.x;
 			yPoints_qv[i] = (int)point.y;
 		}
-		baseX = xPoints_qv[0];
-		baseY = yPoints_qv[1];
-		baseLX = xPoints_qv[3];
-		baseRX = xPoints_qv[1];
 	}
 	
 	
