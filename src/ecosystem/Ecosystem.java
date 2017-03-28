@@ -237,20 +237,22 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
 		if(!QUARTER_VIEW) {
 			return;
 		}
+		
 		float ratio = (float)(0.01f * e.getWheelRotation());
 		float max = 2.0f;
 		float min = (float)(Math.sqrt(2) / 2);
+		OBJ_RATIO += ratio;
 		if(OBJ_RATIO > max) {
 			// 最大よりは大きくしない
 			OBJ_RATIO = max;
 		} else if(OBJ_RATIO < min) {
 			// 最小よりは小さくしない
 			OBJ_RATIO = min;
-		} else {
-			OBJ_RATIO += ratio;
-			// (yPoints_qv[1] ～ QUARTER_OFFSET.y) と baseY の差分がオフセットとなる
-			Stage.QUARTER_OFFSET.y += Stage.baseY - Stage.yPoints_qv[1];
 		}
+		
+		// (yPoints_qv[1] ～ QUARTER_OFFSET.y) と baseY の差分がオフセットとなる
+		Stage.QUARTER_OFFSET.y += Stage.baseY - Stage.yPoints_qv[1];
+		
 		if(THREAD == null) {
 			// スタート前
 			repaint();
