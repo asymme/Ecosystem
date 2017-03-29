@@ -508,7 +508,8 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
 					if(availableTime < 0) {
 						// 処理落ちが続いた時
 						Thread.sleep(1);
-						errorTime -= 1000L;
+						// 厳密なスリープ時間を加算
+						processingTime += (System.currentTimeMillis() - baseTime) * 1000L - processingTime;
 						break;
 					} else if(processingTime >= availableTime) {
 						// 理想時間が経過していたら次フレームへ
