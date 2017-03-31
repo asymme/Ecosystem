@@ -13,22 +13,28 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import java.util.Hashtable;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JLabel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.JComponent;
 
 
 @SuppressWarnings("serial")
-public class Ecosystem extends JPanel implements ActionListener, Runnable, MouseWheelListener, MouseListener, MouseMotionListener {
+public class Ecosystem extends JPanel implements ActionListener, Runnable, MouseWheelListener, MouseListener, MouseMotionListener, ChangeListener {
 	// フレームサイズ
 	private static final int FRAME_WIDTH = 900;
 	private static final int FRAME_HEIGHT = FRAME_WIDTH;
 	
 	// 理想FPS
-	public static final int FPS = 60;
+	public static int FPS = 60;
 	
 	// 初期オブジェクト数
 	private static final int MEAT_EATER = 20;
@@ -75,6 +81,10 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
 	private static int BORDER_X, BORDER_Y, GRAPH_Y;
 	
 	private static JLabel statLabel;
+	private static JSlider fpsSlider;
+	
+	// 理想的な処理時間
+	private static long SPF = 1000000L / FPS;
 	
 	// スレッド
 	private static Timer TIMER;
@@ -130,6 +140,15 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
 			configPanel.add(numField[i]);
 		}
 		configPanel.add(startBtn);
+		
+		Hashtable<Integer, JComponent> table = new Hashtable<Integer, JComponent>();
+		table.put(new Integer(1), new JLabel("1"));
+		table.put(new Integer(FPS), new JLabel(String.valueOf(FPS) + "(fps)"));
+		fpsSlider = new JSlider(1, FPS, FPS);
+		fpsSlider.addChangeListener(this);
+		fpsSlider.setLabelTable(table);
+		fpsSlider.setPaintLabels(true);
+		configPanel.add(fpsSlider);
 		
 		JPanel statPanel = new JPanel();
 		statPanel.setPreferredSize(new Dimension(100, FRAME_HEIGHT));
@@ -474,6 +493,19 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
 	}
 	
 	/**
+	 * Swingコンポーネントイベント処理
+	 */
+	public void stateChanged(ChangeEvent e) {
+		if(e.getSource() == fpsSlider) {
+			FPS = fpsSlider.getValue();
+			SPF = 1000000L / FPS;
+			if(THREAD == null) {
+				repaint();
+			}
+		}
+	}
+	
+	/**
 	 * スレッド開始
 	 */
 	public void start() {
@@ -493,7 +525,6 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
 	 */
 	@Override
 	public void run() {
-		long idealTime = 1000000L / FPS;
 		long processingTime, availableTime;
 		long errorTime = 0L;
 		long baseTime = System.currentTimeMillis();
@@ -501,7 +532,7 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
 			repaint();
 			
 			// 使える時間
-			availableTime = idealTime + errorTime;
+			availableTime = SPF + errorTime;
 			while(true) {
 				try {
 					processingTime = (System.currentTimeMillis() - baseTime) * 1000L;
