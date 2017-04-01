@@ -66,6 +66,8 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
 	
 	// ステージ幅/高さ
 	public static int STAGE_WIDTH, STAGE_HEIGHT;
+	// 実際に表示されている高さ
+	private static int DISP_HEIGHT;
 	
 	// 現在のFPS
 	public static String NOW_FPS;
@@ -171,7 +173,8 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
 		STAGE_HEIGHT = this.getHeight();
 		
 		STAGE = new Stage(0, 0, STAGE_WIDTH, STAGE_HEIGHT);
-		mainFrame.setSize(FRAME_WIDTH - diff, Stage.yPoints_qv[2] + FRAME_HEIGHT - STAGE_HEIGHT + GRAPH_HEIGHT);
+		DISP_HEIGHT = Stage.yPoints_qv[2];
+		mainFrame.setSize(FRAME_WIDTH - diff, DISP_HEIGHT + FRAME_HEIGHT - STAGE_HEIGHT + GRAPH_HEIGHT);
 		
 		this.addMouseWheelListener(this);
 		this.addMouseMotionListener(this);
@@ -244,6 +247,8 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
 		}
 		mousePressedX = e.getX();
 		mousePressedY = e.getY();
+		Stage.QUARTER_BASE.x = Stage.xPoints_qv[0];
+		Stage.QUARTER_BASE.y = Stage.yPoints_qv[1];
 		if(THREAD == null) {
 			repaint();
 		}
@@ -269,8 +274,23 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
 			OBJ_RATIO = min;
 		}
 		
-		// 中心から拡大縮小する
-		Stage.QUARTER_OFFSET.y += this.getHeight() / 2 - Stage.yPoints_qv[1];
+		// 縮小時、ステージが中心に戻るように基点を更新
+		if(ratio < 0) {
+			if(Stage.yPoints_qv[0] > 0) {
+				Stage.QUARTER_BASE.y -= Stage.yPoints_qv[0];
+			} else if(Stage.yPoints_qv[2] < DISP_HEIGHT) {
+				Stage.QUARTER_BASE.y += DISP_HEIGHT - Stage.yPoints_qv[2];
+			}
+			if(Stage.xPoints_qv[1] < STAGE_WIDTH) {
+				Stage.QUARTER_BASE.x += STAGE_WIDTH - Stage.xPoints_qv[1];
+			} else if(Stage.xPoints_qv[3] > 0) {
+				Stage.QUARTER_BASE.x -= Stage.xPoints_qv[3];
+			}
+		}
+		
+		// 基点から拡大縮小する
+		Stage.QUARTER_OFFSET.x += Stage.QUARTER_BASE.x - Stage.xPoints_qv[0];
+		Stage.QUARTER_OFFSET.y += Stage.QUARTER_BASE.y - Stage.yPoints_qv[1];
 		
 		if(THREAD == null) {
 			// スタート前

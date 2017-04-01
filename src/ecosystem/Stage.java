@@ -7,6 +7,8 @@ import java.awt.Color;
 public class Stage {
 	// クォータービューオフセット
 	public static Point2D.Float QUARTER_OFFSET;
+	// クォータービュー基点
+	public static Point2D.Float QUARTER_BASE;
 	
 	// 2Dオフセット
 	public static Point2D.Float OFFSET;
@@ -55,6 +57,7 @@ public class Stage {
 			xPoints_qv[i] = (int)point.x;
 			yPoints_qv[i] = (int)point.y;
 		}
+		QUARTER_BASE = new Point2D.Float(xPoints_qv[0], yPoints_qv[1]);
 	}
 	
 	
