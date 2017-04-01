@@ -162,16 +162,16 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
 		contentPane.add(statPanel, BorderLayout.EAST);
 		mainFrame.setVisible(true);
 		
-		// 内部マップを正四角形に変換
+		// 内部マップが正方形になるように再整形
+		int w = this.getWidth();
+		int h = this.getHeight();
+		int diff = w - h;
+		this.setSize(h, h);
 		STAGE_WIDTH = this.getWidth();
 		STAGE_HEIGHT = this.getHeight();
-		int diff = STAGE_WIDTH - STAGE_HEIGHT;
-		if(diff != 0) {
-			mainFrame.setSize(FRAME_WIDTH - diff, FRAME_HEIGHT / 2 + configPanel.getHeight());
-			this.setSize(STAGE_WIDTH - diff, FRAME_HEIGHT);
-			STAGE_WIDTH = this.getWidth();
-		}
+		
 		STAGE = new Stage(0, 0, STAGE_WIDTH, STAGE_HEIGHT);
+		mainFrame.setSize(FRAME_WIDTH - diff, Stage.yPoints_qv[2] + FRAME_HEIGHT - STAGE_HEIGHT + GRAPH_HEIGHT);
 		
 		this.addMouseWheelListener(this);
 		this.addMouseMotionListener(this);

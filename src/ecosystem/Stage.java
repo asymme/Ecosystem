@@ -33,7 +33,7 @@ public class Stage {
 	 */
 	public Stage(int startX, int startY, int stageWidth, int stageHeight) {
 		OFFSET = new Point2D.Float(0.0f, 0.0f);
-		QUARTER_OFFSET = new Point2D.Float(stageWidth / 2, Ecosystem.GRAPH_HEIGHT);
+		QUARTER_OFFSET = new Point2D.Float(stageWidth / 2.0f, 0.0f);
 		
 		// 左上
 		xPoints[0] = startX;
