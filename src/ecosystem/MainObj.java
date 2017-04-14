@@ -341,6 +341,33 @@ public class MainObj {
      * 種子に変わる
      */
     public void changeSeed() {
+        Seed newObj = new Seed();
+        newObj.x = this.x;
+        newObj.y = this.y;
+        
+        if(Ecosystem.HIGH_LOAD || this.ate <= 1) {
+            return;
+        }
+        
+        // 周りの座標
+        int addLen = this.ate - 1;
+        float rndX, rndY;
+        float newX, newY;
+        int nowLen = Seed.LIST.size();
+        while(Seed.LIST.size() < nowLen + addLen) {
+            // -1 to +1
+            rndX = (float)(Math.random() * 2 - 1);
+            rndY = (float)(Math.random() * 2 - 1);
+            newX = this.x + rndX * OBJ_SIZE;
+            newY = this.y + rndY * OBJ_SIZE;
+            if(newX < 0 || newX > STAGE_WIDTH - OBJ_SIZE || newY < 0 || newY > STAGE_HEIGHT - OBJ_SIZE) {
+                // ステージ外
+                continue;
+            }
+            newObj = new Seed();
+            newObj.x = newX;
+            newObj.y = newY;
+        }
         return;
     }
     

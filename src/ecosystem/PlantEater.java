@@ -137,27 +137,7 @@ public class PlantEater extends MainObj {
     @Override
     public void changeSeed() {
         LIST.remove(this);
-        
-        // 種子に変わる
-        Seed newObj = new Seed();
-        newObj.x = super.x;
-        newObj.y = super.y;
-                
-        if(Ecosystem.HIGH_LOAD || super.ate <= 1) {
-            return;
-        }
-        
-        // 周りの座標
-        int len = (int)Math.ceil(super.ate - 1);
-        float rndX, rndY;
-        for(int i = 0; i < len; i++) {
-            // -1 ～ +1
-            rndX = (float)(Math.random() * 2 - 1);
-            rndY = (float)(Math.random() * 2 - 1);
-            newObj = new Seed();
-            newObj.x = super.x + rndX * OBJ_SIZE;
-            newObj.y = super.y + rndY * OBJ_SIZE;
-        }
+        super.changeSeed();
     }
     
     
