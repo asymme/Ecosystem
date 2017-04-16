@@ -67,7 +67,7 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
     // ステージ幅/高さ
     public static int STAGE_WIDTH, STAGE_HEIGHT;
     // 実際に表示されている高さ
-    private static int DISP_HEIGHT;
+    public static int DISP_HEIGHT;
     // 実際に動ける幅/高さ
     public static int ENABLE_WIDTH, ENABLE_HEIGHT;
     

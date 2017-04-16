@@ -8,6 +8,7 @@ import java.util.ArrayList;
 public class MainObj {
     private static final int STAGE_WIDTH = Ecosystem.STAGE_WIDTH;
     private static final int STAGE_HEIGHT = Ecosystem.STAGE_HEIGHT;
+    private static final int DISP_HEIGHT = Ecosystem.DISP_HEIGHT;
     private static final int ENABLE_WIDTH = Ecosystem.ENABLE_WIDTH;
     private static final int ENABLE_HEIGHT = Ecosystem.ENABLE_HEIGHT;
     
@@ -116,9 +117,6 @@ public class MainObj {
      * @param target 対象オブジェクト
      */
     public void copulate(MainObj target) {
-        this.col = new Color(this.r, this.g += 10, this.b);
-        target.col = new Color(target.r, target.g += 10, target.b);
-        
         this.untilCopulate = target.untilCopulate = UNTIL_COPULATE;
         if(Ecosystem.HIGH_LOAD) {
             // FPSを保てなくなった
@@ -382,11 +380,12 @@ public class MainObj {
      */
     public void draw(Graphics g) {
         float objectSize = OBJ_SIZE * Ecosystem.OBJ_RATIO;
+        float halfSize = objectSize / 2;
         Point2D.Float point = Ecosystem.STAGE.getPoint(this.x + Ecosystem.HALF_OBJ_SIZE, this.y + Ecosystem.HALF_OBJ_SIZE);
-        
-        if(point.x > 0 && point.x < STAGE_WIDTH && point.y > 0 && point.y < STAGE_HEIGHT) {
+        // 映っている範囲内のみ描画
+        if(point.x > 0 && point.x < STAGE_WIDTH && point.y > 0 && point.y < DISP_HEIGHT) {
             g.setColor(this.col);
-            g.fillOval((int)(point.x - objectSize / 2), (int)(point.y - objectSize / 2), (int)objectSize, (int)objectSize);
+            g.fillOval((int)(point.x - halfSize), (int)(point.y - halfSize), (int)objectSize, (int)objectSize);
         }
     }
     
