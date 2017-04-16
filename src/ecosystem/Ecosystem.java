@@ -55,11 +55,14 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
     // グラフ高さ
     public static final int GRAPH_HEIGHT = 5;
     
+    // Math.sqrt(2) / 2
+    public static final float SQRT05 = (float)Math.sqrt(0.5d);
+    
     // クォータービュー/2D
     public static Boolean QUARTER_VIEW = true;
     
     // オブジェクト倍率
-    public static float OBJ_RATIO = (float)(Math.sqrt(2) / 2);
+    public static float OBJ_RATIO = SQRT05;
     
     // ステージオブジェクト用
     public static Stage STAGE;
@@ -268,7 +271,7 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
         
         float ratio = (float)(0.01f * e.getWheelRotation());
         float max = 2.0f;
-        float min = (float)(Math.sqrt(2) / 2);
+        float min = SQRT05;
         OBJ_RATIO += ratio;
         if(OBJ_RATIO > max) {
             // 最大よりは大きくしない
@@ -467,6 +470,9 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
             
             // 水(集合させる)
             Water newObj = new Water();
+            newObj.x = (float)(Math.random() * ENABLE_WIDTH + Math.random() * ENABLE_WIDTH) / 2.0f;
+            newObj.y = (float)(Math.random() * ENABLE_HEIGHT + Math.random() * ENABLE_HEIGHT) / 2.0f;
+            
             float rndX, rndY, newX, newY;
             int idx;
             while(Water.LIST.size() < WATER) {
@@ -508,7 +514,7 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
             //TIMER.start();
             this.start();
         } else if(e.getSource() == changeViewBtn) {
-            OBJ_RATIO = (QUARTER_VIEW = !QUARTER_VIEW) ? (float)(Math.sqrt(2) / 2) : 1.0f;
+            OBJ_RATIO = (QUARTER_VIEW = !QUARTER_VIEW) ? SQRT05 : 1.0f;
             if(THREAD == null) {
                 repaint();
             }

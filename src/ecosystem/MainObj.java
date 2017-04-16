@@ -7,10 +7,10 @@ import java.util.ArrayList;
 
 public class MainObj {
     private static final int STAGE_WIDTH = Ecosystem.STAGE_WIDTH;
-    private static final int STAGE_HEIGHT = Ecosystem.STAGE_HEIGHT;
     private static final int DISP_HEIGHT = Ecosystem.DISP_HEIGHT;
     private static final int ENABLE_WIDTH = Ecosystem.ENABLE_WIDTH;
     private static final int ENABLE_HEIGHT = Ecosystem.ENABLE_HEIGHT;
+    private static final float SQRT05 = Ecosystem.SQRT05;
     
     public static final int OBJ_SIZE = Ecosystem.OBJ_SIZE;
     public static final int HALF_OBJ_SIZE = Ecosystem.HALF_OBJ_SIZE;
@@ -149,12 +149,12 @@ public class MainObj {
             case 5:
                 // 右上
                 if(this.y > this.dy) {
-                    this.y -= Math.sqrt(this.dy) / 2;
+                    this.y -= SQRT05 * this.dy;
                 } else {
                     this.repeat /= 2;
                 }
                 if(this.x < enableX) {
-                    this.x += Math.sqrt(this.dx) / 2;
+                    this.x += SQRT05 * this.dx;
                 } else {
                     this.repeat /= 2;
                 }
@@ -170,12 +170,12 @@ public class MainObj {
             case 6:
                 // 右下
                 if(this.x < enableX) {
-                    this.x += Math.sqrt(this.dx) / 2;
+                    this.x += SQRT05 * this.dx;
                 } else {
                     this.repeat /= 2;
                 }
                 if(this.y < enableY) {
-                    this.y += Math.sqrt(this.dy) / 2;
+                    this.y += SQRT05 * this.dy;
                 } else {
                     this.repeat /= 2;
                 }
@@ -191,12 +191,12 @@ public class MainObj {
             case 7:
                 // 左下
                 if(this.y < enableY) {
-                    this.y += Math.sqrt(this.dy) / 2;
+                    this.y += SQRT05 * this.dy;
                 } else {
                     this.repeat /= 2;
                 }
                 if(this.x > this.dx) {
-                    this.x -= Math.sqrt(this.dx) / 2;
+                    this.x -= SQRT05 * this.dx;
                 } else {
                     this.repeat /= 2;
                 }
@@ -212,12 +212,12 @@ public class MainObj {
             case 8:
                 // 左上
                 if(this.x > this.dx) {
-                    this.x -= Math.sqrt(this.dx) / 2;
+                    this.x -= SQRT05 * this.dx;
                 } else {
                     this.repeat /= 2;
                 }
                 if(this.y > this.dy) {
-                    this.y -= Math.sqrt(this.dy) / 2;
+                    this.y -= SQRT05 * this.dy;
                 } else {
                     this.repeat /= 2;
                 }
