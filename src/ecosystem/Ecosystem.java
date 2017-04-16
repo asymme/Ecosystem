@@ -68,6 +68,8 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
     public static int STAGE_WIDTH, STAGE_HEIGHT;
     // 実際に表示されている高さ
     private static int DISP_HEIGHT;
+    // 実際に動ける幅/高さ
+    public static int ENABLE_WIDTH, ENABLE_HEIGHT;
     
     // 現在のFPS
     public static String NOW_FPS;
@@ -171,6 +173,8 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
         this.setSize(h, h);
         STAGE_WIDTH = this.getWidth();
         STAGE_HEIGHT = this.getHeight();
+        ENABLE_WIDTH = STAGE_WIDTH - OBJ_SIZE;
+        ENABLE_HEIGHT = STAGE_HEIGHT - OBJ_SIZE;
         
         STAGE = new Stage(0, 0, STAGE_WIDTH, STAGE_HEIGHT);
         DISP_HEIGHT = Stage.yPoints_qv[2];
@@ -463,24 +467,23 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
             
             // 水(集合させる)
             Water newObj = new Water();
-            float rndX, rndY, nx, ny;
+            float rndX, rndY, newX, newY;
             int idx;
             while(Water.LIST.size() < WATER) {
                 idx = (int)Math.floor( Math.random() * Water.LIST.size() );
                 Water obj = Water.LIST.get(idx);
-                // -1 ～ +1
+                // -1 to +1
                 rndX = (float)(Math.random() * 2 - 1);
                 rndY = (float)(Math.random() * 2 - 1);
-                
-                nx = obj.x + rndX * OBJ_SIZE;
-                ny = obj.y + rndY * OBJ_SIZE;
-                if(nx < 0 || ny < 0 || nx > STAGE_WIDTH || ny > STAGE_HEIGHT) {
+                newX = obj.x + rndX * OBJ_SIZE;
+                newY = obj.y + rndY * OBJ_SIZE;
+                if(newX < 0 || newX > ENABLE_WIDTH || newY < 0 || newY > ENABLE_HEIGHT) {
                     continue;
                 }
                 
                 newObj = new Water();
-                newObj.x = nx;
-                newObj.y = ny;
+                newObj.x = newX;
+                newObj.y = newY;
             }
             
             // 草食

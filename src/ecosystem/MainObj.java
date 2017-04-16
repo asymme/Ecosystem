@@ -8,6 +8,8 @@ import java.util.ArrayList;
 public class MainObj {
     private static final int STAGE_WIDTH = Ecosystem.STAGE_WIDTH;
     private static final int STAGE_HEIGHT = Ecosystem.STAGE_HEIGHT;
+    private static final int ENABLE_WIDTH = Ecosystem.ENABLE_WIDTH;
+    private static final int ENABLE_HEIGHT = Ecosystem.ENABLE_HEIGHT;
     
     public static final int OBJ_SIZE = Ecosystem.OBJ_SIZE;
     public static final int HALF_OBJ_SIZE = Ecosystem.HALF_OBJ_SIZE;
@@ -42,8 +44,8 @@ public class MainObj {
      */
     public MainObj() {
         // 初期座標
-        this.x = (float)(Math.random() * (STAGE_WIDTH - OBJ_SIZE));
-        this.y = (float)(Math.random() * (STAGE_HEIGHT - OBJ_SIZE));
+        this.x = (float)(Math.random() * ENABLE_WIDTH);
+        this.y = (float)(Math.random() * ENABLE_HEIGHT);
         
         // 初期方向・繰り返し回数
         this.changeDirection(true, false);
@@ -114,6 +116,9 @@ public class MainObj {
      * @param target 対象オブジェクト
      */
     public void copulate(MainObj target) {
+        this.col = new Color(this.r, this.g += 10, this.b);
+        target.col = new Color(target.r, target.g += 10, target.b);
+        
         this.untilCopulate = target.untilCopulate = UNTIL_COPULATE;
         if(Ecosystem.HIGH_LOAD) {
             // FPSを保てなくなった
@@ -128,8 +133,8 @@ public class MainObj {
      * 移動
      */
     public void walk() {
-        float enableX = STAGE_WIDTH - OBJ_SIZE - this.dx;
-        float enableY = STAGE_HEIGHT - OBJ_SIZE - this.dy;
+        float enableX = ENABLE_WIDTH - this.dx;
+        float enableY = ENABLE_HEIGHT - this.dy;
         switch(this.direction) {
             case 0:
                 // 留まる
@@ -351,8 +356,7 @@ public class MainObj {
         
         // 周りの座標
         int addLen = this.ate - 1;
-        float rndX, rndY;
-        float newX, newY;
+        float rndX, rndY, newX, newY;
         int nowLen = Seed.LIST.size();
         while(Seed.LIST.size() < nowLen + addLen) {
             // -1 to +1
@@ -360,7 +364,7 @@ public class MainObj {
             rndY = (float)(Math.random() * 2 - 1);
             newX = this.x + rndX * OBJ_SIZE;
             newY = this.y + rndY * OBJ_SIZE;
-            if(newX < 0 || newX > STAGE_WIDTH - OBJ_SIZE || newY < 0 || newY > STAGE_HEIGHT - OBJ_SIZE) {
+            if(newX < 0 || newX > ENABLE_WIDTH || newY < 0 || newY > ENABLE_HEIGHT) {
                 // ステージ外
                 continue;
             }
