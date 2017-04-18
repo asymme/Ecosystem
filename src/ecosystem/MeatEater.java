@@ -9,11 +9,12 @@ public class MeatEater extends MainObj {
     
     public MeatEater() {
         super();
+        this.hungry = this.life / 8;
         super.r = 200;
         super.g = super.b = 64;
         super.col = new Color(super.r, super.g, super.b);
         super.untilCopulate = 10;
-        LIST.add(this);
+        LIST.add(0, this);
     }
     
     
@@ -34,13 +35,7 @@ public class MeatEater extends MainObj {
         
         if(--super.repeat <= 0) {
             // 方向変換
-            Boolean b1 = true;
-            Boolean b2 = false;
-            if(super.isLimit) {
-                b1 = false;
-                b2 = true;
-            }
-            super.changeDirection(b1, b2);
+            super.changeDirection(super.isLimit);
         }
         
         if(super.untilCopulate <= 0 && !super.isLimit) {
@@ -106,10 +101,6 @@ public class MeatEater extends MainObj {
             newObj = new MeatEater();
             newObj.x = super.x;
             newObj.y = super.y;
-            if(len == 1) {
-                newObj.direction = 0;
-                newObj.repeat = 10;
-            }
         }
         super.copulate(target);
     }

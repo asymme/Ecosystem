@@ -12,7 +12,7 @@ public class PlantEater extends MainObj {
         super.b = 200;
         super.r = super.g = 64;
         super.col = new Color(super.r, super.g, super.b);
-        LIST.add(this);
+        LIST.add(0, this);
     }
     
     
@@ -21,23 +21,9 @@ public class PlantEater extends MainObj {
      * @param target 対象オブジェクト
      */
     public void runawayFromTarget(MainObj target) {
-        super.repeat = (int)(Math.random() * REPEAT_MAX);
-        
-        float diffX = super.x - target.x;
-        float diffY = super.y - target.y;
-        if(diffX >= 0 && diffY >= 0) {
-            // 右下に逃げる
-            super.direction = 6;
-        } else if(diffX >= 0 && diffY < 0) {
-            // 右上
-            super.direction = 5;
-        } else if(diffX < 0 && diffY >= 0) {
-            // 左下
-            super.direction = 7;
-        } else if(diffX < 0 && diffY < 0) {
-            // 左上
-            super.direction = 8;
-        }
+        double radian = Math.atan2(target.y - this.y, target.x - this.x);
+        this.degree = (int)Math.round(radian * 180.0d / Math.PI - 180.0d);
+        this.degree += (int)Math.round(Math.random() * 180.0d) - 90;
     }
     
     
@@ -58,13 +44,7 @@ public class PlantEater extends MainObj {
         
         if(--super.repeat <= 0) {
             // 方向変換
-            Boolean b1 = true;
-            Boolean b2 = false;
-            if(super.isLimit) {
-                b1 = false;
-                b2 = true;
-            }
-            super.changeDirection(b1, b2);
+            super.changeDirection(super.isLimit);
         }
         
         if(super.untilCopulate <= 0 && !super.isLimit) {
@@ -103,7 +83,6 @@ public class PlantEater extends MainObj {
             if(nearestObj.isHit) {
                 // 触れていれば捕食
                 super.eat(target);
-                //target.life = 0;
             } else if(super.isLimit && nearestObj.distance < VIEW_RANGE) {
                 // 視界内ならば捕食対象へ向かう
                 super.goToTarget(target);
@@ -149,10 +128,6 @@ public class PlantEater extends MainObj {
             newObj = new PlantEater();
             newObj.x = super.x;
             newObj.y = super.y;
-            if(len == 1) {
-                newObj.direction = 0;
-                newObj.repeat = 10;
-            }
         }
         super.copulate(target);
     }

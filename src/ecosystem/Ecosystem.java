@@ -43,7 +43,7 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
     private static final int WATER = 1000;
     
     // オブジェクトサイズ
-    public static final int OBJ_SIZE = FRAME_WIDTH / 27;
+    public static final int OBJ_SIZE = FRAME_WIDTH / 28;
     public static final int HALF_OBJ_SIZE = OBJ_SIZE / 2;
     
     // 視野

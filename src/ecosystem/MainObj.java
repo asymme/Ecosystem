@@ -10,7 +10,6 @@ public class MainObj {
     private static final int DISP_HEIGHT = Ecosystem.DISP_HEIGHT;
     private static final int ENABLE_WIDTH = Ecosystem.ENABLE_WIDTH;
     private static final int ENABLE_HEIGHT = Ecosystem.ENABLE_HEIGHT;
-    private static final float SQRT05 = Ecosystem.SQRT05;
     
     public static final int OBJ_SIZE = Ecosystem.OBJ_SIZE;
     public static final int HALF_OBJ_SIZE = Ecosystem.HALF_OBJ_SIZE;
@@ -28,6 +27,7 @@ public class MainObj {
     public int r, g, b;    // カラー
     public Color col;
     public int direction, repeat;    // 方向・回数
+    public int degree;
     public float dx, dy;    // 移動量
     public int life, max;    // 生命力
     public int hungry;    // 空腹
@@ -49,7 +49,8 @@ public class MainObj {
         this.y = (float)(Math.random() * ENABLE_HEIGHT);
         
         // 初期方向・繰り返し回数
-        this.changeDirection(true, false);
+//        this.changeDirection(true, false);
+        this.changeDirection(false);
         
         // 移動量
         this.dx = this.dy = VWALK;
@@ -67,17 +68,11 @@ public class MainObj {
     
     /**
      * 方向変更
-     * @param allDirections 9方向か5方向か
      * @param except0 静止状態を除くか
      */
-    public void changeDirection(Boolean allDirections, Boolean except0) {
-        int n = allDirections ? 9 : 5;
-        int o = 0;
-        if(except0) {
-            n--;
-            o++;
-        }
-        this.direction = (int)(Math.random() * n) + o;
+    public void changeDirection(Boolean except0) {
+        int n = (except0) ? 360 : 400;
+        this.degree = (int)(Math.random() * n);
         this.repeat = (int)(Math.random() * REPEAT_MAX);
     }
     
@@ -131,97 +126,21 @@ public class MainObj {
      * 移動
      */
     public void walk() {
-        float enableX = ENABLE_WIDTH - this.dx;
-        float enableY = ENABLE_HEIGHT - this.dy;
-        switch(this.direction) {
-            case 0:
-                // 留まる
-                break;
-            case 1:
-                // 上
-                if(this.y > this.dy) {
-                    this.y -= this.dy;
-                } else {
-                    // 端
-                    this.repeat /= 2;
-                }
-                break;
-            case 5:
-                // 右上
-                if(this.y > this.dy) {
-                    this.y -= SQRT05 * this.dy;
-                } else {
-                    this.repeat /= 2;
-                }
-                if(this.x < enableX) {
-                    this.x += SQRT05 * this.dx;
-                } else {
-                    this.repeat /= 2;
-                }
-                break;
-            case 2:
-                // 右
-                if(this.x < enableX) {
-                    this.x += this.dx;
-                } else {
-                    this.repeat /= 2;
-                }
-                break;
-            case 6:
-                // 右下
-                if(this.x < enableX) {
-                    this.x += SQRT05 * this.dx;
-                } else {
-                    this.repeat /= 2;
-                }
-                if(this.y < enableY) {
-                    this.y += SQRT05 * this.dy;
-                } else {
-                    this.repeat /= 2;
-                }
-                break;
-            case 3:
-                // 下
-                if(this.y < enableY) {
-                    this.y += this.dy;
-                } else {
-                    this.repeat /= 2;
-                }
-                break;
-            case 7:
-                // 左下
-                if(this.y < enableY) {
-                    this.y += SQRT05 * this.dy;
-                } else {
-                    this.repeat /= 2;
-                }
-                if(this.x > this.dx) {
-                    this.x -= SQRT05 * this.dx;
-                } else {
-                    this.repeat /= 2;
-                }
-                break;
-            case 4:
-                // 左
-                if(this.x > this.dx) {
-                    this.x -= this.dx;
-                } else {
-                    this.repeat /= 2;
-                }
-                break;
-            case 8:
-                // 左上
-                if(this.x > this.dx) {
-                    this.x -= SQRT05 * this.dx;
-                } else {
-                    this.repeat /= 2;
-                }
-                if(this.y > this.dy) {
-                    this.y -= SQRT05 * this.dy;
-                } else {
-                    this.repeat /= 2;
-                }
-                break;
+        if(this.degree >= 360) {
+            return;
+        }
+        double radian = this.degree * Math.PI / 180.0d;
+        float newX = (float)Math.cos(radian) * this.dx + this.x;
+        float newY = (float)Math.sin(radian) * this.dy + this.y;
+        if(newX > 0 && newX < ENABLE_WIDTH) {
+            this.x = newX;
+        } else {
+            this.repeat /= 2;
+        }
+        if(newY > 0 && newY < ENABLE_HEIGHT) {
+            this.y = newY;
+        } else {
+            this.repeat /= 2;
         }
     }
     
@@ -239,18 +158,8 @@ public class MainObj {
      * @param target 対象オブジェクト
      */
     public void goToTarget(MainObj target) {
-        this.repeat = (int)(Math.random() * REPEAT_MAX);
-        
-        float diffX = this.x - target.x;
-        float diffY = this.y - target.y;
-        if(Math.abs(diffX) >= Math.abs(diffY)) {
-            // 横移動が多い
-            this.direction = diffX >= 0 ? 4 : 2;
-        } else {
-            // 縦移動が多い
-            this.direction = diffY >= 0 ? 1 : 3;
-        }
-        return;
+        double radian = Math.atan2(target.y - this.y, target.x - this.x);
+        this.degree = (int)Math.round(radian * 180.0d / Math.PI);
     }
         
     
@@ -404,13 +313,13 @@ public class MainObj {
         
         Stage stage = Ecosystem.STAGE;
         Point2D.Float point = stage.getPoint(this.x + HALF_OBJ_SIZE, this.y + HALF_OBJ_SIZE);
-        int yRatio = Ecosystem.QUARTER_VIEW.compareTo(false) + 1;    // QUARTER: 2, 2D: 1
+//        int yRatio = Ecosystem.QUARTER_VIEW.compareTo(false) + 1;    // QUARTER: 2, 2D: 1
         
         if(this.untilCopulate <= 0) {
             // 視界描画
-            g.setColor(new Color(255 - this.col.getRed(), 255 - this.col.getGreen(), 255 - this.col.getBlue(), 64));
-            float range  = (float)( Math.sqrt(VIEW_RANGE) * Ecosystem.OBJ_RATIO );
-            g.fillOval((int)(point.x - range / 2), (int)(point.y - range / 2 / yRatio), (int)range, (int)(range / yRatio));
+//            g.setColor(new Color(255 - this.col.getRed(), 255 - this.col.getGreen(), 255 - this.col.getBlue(), 64));
+//            float range  = (float)( Math.sqrt(VIEW_RANGE) * Ecosystem.OBJ_RATIO );
+//            g.fillOval((int)(point.x - range / 2), (int)(point.y - range / 2 / yRatio), (int)range, (int)(range / yRatio));
             
             NearestObj nearestObj = this.getNearestObj(ownList);
             if(nearestObj.idx < 0 || nearestObj.distance > VIEW_RANGE) {
