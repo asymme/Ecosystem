@@ -22,7 +22,6 @@ public class MeatEater extends MainObj {
     public void onEnterFrame() {
         if(--super.life <= 0) {
             // 死
-            super.isDead = true;
             this.changeSeed();
             return;
         } else if(--super.untilEat <= 0 && !super.isHungry) {

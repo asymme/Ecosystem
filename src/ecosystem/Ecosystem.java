@@ -43,7 +43,7 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
     private static final int WATER = 1000;
     
     // オブジェクトサイズ
-    public static final int OBJ_SIZE = FRAME_WIDTH / 28;
+    public static final int OBJ_SIZE = FRAME_WIDTH / 29;
     public static final int HALF_OBJ_SIZE = OBJ_SIZE / 2;
     
     // 視野
@@ -590,9 +590,6 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
     
     public static void main(String[] args) {
         // TODO 自動生成されたメソッド・スタブ
-        // フルスピードモード
-        // 植物が端にある時、草食動物がはまる
-        // 草食動物が四隅に追い詰められる
         new Ecosystem();
     }
 

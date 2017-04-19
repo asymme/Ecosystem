@@ -15,7 +15,6 @@ public class Seed extends MainObj {
     @Override
     public void onEnterFrame() {
         if(--super.wait <= 0) {
-            super.isDead = true;
             LIST.remove(this);
             
             // 植物に変わる

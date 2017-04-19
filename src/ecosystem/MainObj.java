@@ -33,7 +33,6 @@ public class MainObj {
     public int hungry;    // 空腹
     public Boolean isHungry;    // 食事可能
     public Boolean isLimit;    // 空腹の限界
-    public Boolean isDead;    // 死
     public int wait;    // 種子から植物へのウェイト
     public int ate;    // 捕食数
     public int untilEat;    // 捕食可能フレーム
@@ -59,7 +58,7 @@ public class MainObj {
         this.life = LIFE + (int)(Math.random() * LIFE / 2);
         this.max = this.life;
         this.hungry = this.life / 4;
-        this.isHungry = this.isLimit = this.isDead = false;
+        this.isHungry = this.isLimit = false;
         this.untilEat = UNTIL_EAT;
         this.untilCopulate = UNTIL_COPULATE;
         this.wait = WAIT + (int)(Math.random() * 64);

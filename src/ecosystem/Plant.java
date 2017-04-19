@@ -21,7 +21,6 @@ public class Plant extends MainObj {
     public void onEnterFrame() {
         if(--super.life <= 0) {
             // 死
-            super.isDead = true;
             LIST.remove(this);
             return;
         } else if(super.life < super.max / 4 && !super.isHungry) {
