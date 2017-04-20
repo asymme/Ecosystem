@@ -43,7 +43,7 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
     private static final int WATER = 1000;
     
     // オブジェクトサイズ
-    public static final int OBJ_SIZE = FRAME_WIDTH / 29;
+    public static final int OBJ_SIZE = FRAME_WIDTH / 27;
     public static final int HALF_OBJ_SIZE = OBJ_SIZE / 2;
     
     // 視野
@@ -365,7 +365,7 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
         int sd = Seed.LIST.size();
         int wt = Water.LIST.size();
         int total = me + pe + pl + sd + wt;
-        if(me + pe + pl == 0) {
+        if(me + pe + pl + sd == 0) {
             THREAD = null;
         }
         if(total == 0) {

@@ -21,19 +21,16 @@ public class MainObj {
     public static final int VWALK = 1;    // 歩行速度
     public static final int VRUN = 2;    // 走る
     public static final int LIFE = 540;    // 生命力
-    public static final int WAIT = 127;    // ウェイト
     
     public float x, y;    // 座標
     public int r, g, b;    // カラー
     public Color col;
-    public int direction, repeat;    // 方向・回数
-    public int degree;
+    public int degree, repeat;    // 方向・回数
     public float dx, dy;    // 移動量
     public int life, max;    // 生命力
     public int hungry;    // 空腹
     public Boolean isHungry;    // 食事可能
     public Boolean isLimit;    // 空腹の限界
-    public int wait;    // 種子から植物へのウェイト
     public int ate;    // 捕食数
     public int untilEat;    // 捕食可能フレーム
     public int untilCopulate;    // 交尾までの捕食数
@@ -48,7 +45,6 @@ public class MainObj {
         this.y = (float)(Math.random() * ENABLE_HEIGHT);
         
         // 初期方向・繰り返し回数
-//        this.changeDirection(true, false);
         this.changeDirection(false);
         
         // 移動量
@@ -61,7 +57,6 @@ public class MainObj {
         this.isHungry = this.isLimit = false;
         this.untilEat = UNTIL_EAT;
         this.untilCopulate = UNTIL_COPULATE;
-        this.wait = WAIT + (int)(Math.random() * 64);
     }
     
     
@@ -180,16 +175,12 @@ public class MainObj {
         Boolean flag = (this.getClass() == targetList.get(0).getClass());
         for(int i = targetList.size() - 1; i >= 0; i--) {
             target = targetList.get(i);
-            if(flag && (target.untilCopulate > 0 || target.isLimit)) {
+            if(flag && (target.equals(this) || target.untilCopulate > 0 || target.isLimit)) {
                 continue;
             }
             distance = Math.pow(this.x - target.x, 2) + Math.pow(this.y - target.y, 2);
             if(distance < Ecosystem.HIT_RANGE) {
                 // 触れている
-                if(target.equals(this)) {
-                    // own
-                    continue;
-                }
                 nearestObj.distance = distance;
                 nearestObj.idx = i;
                 nearestObj.isHit = true;
