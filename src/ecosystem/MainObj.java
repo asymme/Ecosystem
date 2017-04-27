@@ -155,88 +155,6 @@ public class MainObj {
         double radian = Math.atan2(target.y - this.y, target.x - this.x);
         this.degree = (int)Math.round(radian * 180.0d / Math.PI);
     }
-        
-    
-    /**
-     * 最も近いオブジェクトを探索
-     * @param targetList 対象オブジェクトのArrayList
-     * @return オブジェクト情報
-     */
-    public NearestObj getNearestObj(ArrayList<? extends MainObj> targetList) {
-        NearestObj nearestObj = new NearestObj();
-        if(targetList.size() == 0) {
-            // 対象オブジェクトなし
-            return nearestObj;
-        }
-        
-        MainObj target;
-        double distance;
-        // 同クラスの検索かどうか
-        Boolean flag = (this.getClass() == targetList.get(0).getClass());
-        for(int i = targetList.size() - 1; i >= 0; i--) {
-            target = targetList.get(i);
-            if(flag && (target.equals(this) || target.untilCopulate > 0 || target.isLimit)) {
-                continue;
-            }
-            distance = Math.pow(this.x - target.x, 2) + Math.pow(this.y - target.y, 2);
-            if(distance < Ecosystem.HIT_RANGE) {
-                // 触れている
-                nearestObj.distance = distance;
-                nearestObj.idx = i;
-                nearestObj.isHit = true;
-                break;
-            } else if(distance < nearestObj.distance) {
-                // 範囲内で最も近い
-                nearestObj.distance = distance;
-                nearestObj.idx = i;
-            }
-        }
-        return nearestObj;
-    }
-    
-    
-    /**
-     * 最も近いオブジェクトを全て探索
-     * @param targetList 対象オブジェクトのArrayList
-     * @return オブジェクト情報の入ったArraList
-     */
-    public ArrayList<NearestObj> getNearestObjAll(ArrayList<? extends MainObj> targetList) {
-        ArrayList<NearestObj> nearestObjList = new ArrayList<NearestObj>();
-        NearestObj nearestObj = new NearestObj();
-        if(targetList.size() == 0) {
-            // 対象オブジェクトなし
-            return nearestObjList;
-        }
-        
-        MainObj target;
-        double distance;
-        // 同クラスの検索かどうか
-        Boolean flag = (this.getClass() == targetList.get(0).getClass());
-        for(int i = targetList.size() - 1; i >= 0; i--) {
-            target = targetList.get(i);
-            if(flag && (target.untilCopulate > 0 || target.isLimit)) {
-                continue;
-            }
-            distance = Math.pow(this.x - target.x, 2) + Math.pow(this.y - target.y, 2);
-            if(distance < Ecosystem.HIT_RANGE) {
-                // 触れている
-                if(target.equals(this)) {
-                    // own
-                    continue;
-                }
-                nearestObj.distance = distance;
-                nearestObj.idx = i;
-                nearestObj.isHit = true;
-                nearestObjList.add(nearestObj);
-            } else if(distance < Ecosystem.VIEW_RANGE) {
-                // 最も近い
-                nearestObj.distance = distance;
-                nearestObj.idx = i;
-                nearestObjList.add(nearestObj);
-            }
-        }
-        return nearestObjList;
-    }
     
     
     /**
@@ -301,21 +219,21 @@ public class MainObj {
             return;
         }
         
+        NearestObj nObj;
         Stage stage = Ecosystem.STAGE;
         Point2D.Float point = stage.getPoint(this.x + HALF_OBJ_SIZE, this.y + HALF_OBJ_SIZE);
 //        int yRatio = Ecosystem.QUARTER_VIEW.compareTo(false) + 1;    // QUARTER: 2, 2D: 1
-        
         if(this.untilCopulate <= 0) {
             // 視界描画
 //            g.setColor(new Color(255 - this.col.getRed(), 255 - this.col.getGreen(), 255 - this.col.getBlue(), 64));
 //            float range  = (float)( Math.sqrt(VIEW_RANGE) * Ecosystem.OBJ_RATIO );
 //            g.fillOval((int)(point.x - range / 2), (int)(point.y - range / 2 / yRatio), (int)range, (int)(range / yRatio));
             
-            NearestObj nearestObj = this.getNearestObj(ownList);
-            if(nearestObj.idx < 0 || nearestObj.distance > VIEW_RANGE) {
+            nObj = new NearestObj().get(this, ownList);
+            if(nObj.idx < 0 || nObj.distance > VIEW_RANGE) {
                 return;
             }
-            MainObj target = ownList.get(nearestObj.idx);
+            MainObj target = ownList.get(nObj.idx);
             Point2D.Float targetPoint = stage.getPoint(target.x + HALF_OBJ_SIZE, target.y + HALF_OBJ_SIZE);
             
             g.setColor(Color.pink);
@@ -323,11 +241,11 @@ public class MainObj {
         }
         
         if(this.isLimit) {
-            NearestObj nearestObj = this.getNearestObj(foodList);
-            if(nearestObj.idx < 0 || nearestObj.distance > VIEW_RANGE) {
+            nObj = new NearestObj().get(this, foodList);
+            if(nObj.idx < 0 || nObj.distance > VIEW_RANGE) {
                 return;
             }
-            MainObj target = foodList.get(nearestObj.idx);
+            MainObj target = foodList.get(nObj.idx);
             Point2D.Float targetPoint = stage.getPoint(target.x + HALF_OBJ_SIZE, target.y + HALF_OBJ_SIZE);
             
             g.setColor(Color.white);

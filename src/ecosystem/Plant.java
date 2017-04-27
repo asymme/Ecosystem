@@ -28,10 +28,10 @@ public class Plant extends MainObj {
             super.col = new Color(222, 222, 127, 222);
         } else {
             // 水中かどうか
-            NearestObj nearestObj = super.getNearestObj(Water.LIST);
-            if(nearestObj.isHit) {
+            NearestObj nObj = new NearestObj().get(this, Water.LIST);
+            if(nObj.isHit) {
                 super.life++;
-                Water.LIST.get(nearestObj.idx).life -= (int)Math.round( Math.pow( Math.random(), Integer.parseInt(Ecosystem.NOW_FPS) ) );
+                Water.LIST.get(nObj.idx).life -= (int)Math.round( Math.pow( Math.random(), Integer.parseInt(Ecosystem.NOW_FPS) ) );
             }
         }
     }

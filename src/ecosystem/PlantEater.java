@@ -31,7 +31,8 @@ public class PlantEater extends MainObj {
     public void onEnterFrame() {
         if(--super.life <= 0) {
             // 死
-            this.changeSeed();
+            LIST.remove(this);
+            super.changeSeed();
             return;
         } else if(--super.untilEat <= 0 && !super.isHungry) {
             // 捕食可能
@@ -46,65 +47,73 @@ public class PlantEater extends MainObj {
             super.changeDirection(super.isLimit);
         }
         
+        NearestObj nearestObj = new NearestObj();
+        NearestObj nObj;
         if(super.untilCopulate <= 0 && !super.isLimit) {
             // 交尾可能
-            NearestObj nearestObj = super.getNearestObj(LIST);
-            if(nearestObj.isHit) {
+//            NearestObj nearestObj = super.getNearestObj(LIST);
+            nObj = nearestObj.get(this, LIST);
+            if(nObj.isHit) {
                 // 触れていれば交尾
-                this.copulate( LIST.get(nearestObj.idx) );
-            } else if(nearestObj.distance < VIEW_RANGE) {
+                this.copulate( LIST.get(nObj.idx) );
+            } else if(nObj.distance < VIEW_RANGE) {
                 // 視界内ならば同族種に向かう
-                super.goToTarget( LIST.get(nearestObj.idx) );
+                super.goToTarget( LIST.get(nObj.idx) );
             } else {
                 // 視界内にいなければ肉食から逃げる判断
-                nearestObj = super.getNearestObj(MeatEater.LIST);
-                if(nearestObj.distance < VIEW_RANGE) {
-                    this.runawayFromTarget( MeatEater.LIST.get(nearestObj.idx) );
+//                nearestObj = super.getNearestObj(MeatEater.LIST);
+                nObj = new NearestObj().get(this, MeatEater.LIST);
+                if(nObj.distance < VIEW_RANGE) {
+                    this.runawayFromTarget( MeatEater.LIST.get(nObj.idx) );
                 }
             }
-        } else if(super.isHungry || super.isLimit) {
+        } else if(super.isHungry) {
             // 捕食可能
             // 植物、水を混ぜたリストを作成
             ArrayList<MainObj> tmpList = new ArrayList<MainObj>();
             tmpList.addAll(Plant.LIST);
             tmpList.addAll(Water.LIST);
             
-            NearestObj nearestObj = super.getNearestObj(tmpList);
+//            NearestObj nearestObj = super.getNearestObj(tmpList);
+            nObj = nearestObj.get(this, tmpList);
             // idxから植物か水か判定
             MainObj target = null;
-            if(nearestObj.idx < 0) {
+            if(nObj.idx < 0) {
                 // 近くになし
-            } else if(nearestObj.idx < Plant.LIST.size()) {
-                target = Plant.LIST.get(nearestObj.idx);
+            } else if(nObj.idx < Plant.LIST.size()) {
+                target = Plant.LIST.get(nObj.idx);
             } else {
-                target = Water.LIST.get(nearestObj.idx - Plant.LIST.size());
+                target = Water.LIST.get(nObj.idx - Plant.LIST.size());
             }
-            if(nearestObj.isHit) {
+            if(nObj.isHit) {
                 // 触れていれば捕食
                 super.eat(target);
-            } else if(super.isLimit && nearestObj.distance < VIEW_RANGE) {
+            } else if(super.isLimit && nObj.distance < VIEW_RANGE) {
                 // 視界内ならば捕食対象へ向かう
                 super.goToTarget(target);
             } else if(!super.isLimit && super.isHungry) {
                 // 視界内になければ肉食から逃げる判断
-                nearestObj = super.getNearestObj(MeatEater.LIST);
-                if(nearestObj.distance < VIEW_RANGE) {
-                    this.runawayFromTarget( MeatEater.LIST.get(nearestObj.idx) );
+//                nearestObj = super.getNearestObj(MeatEater.LIST);
+                nObj = new NearestObj().get(this, MeatEater.LIST);
+                if(nObj.distance < VIEW_RANGE) {
+                    this.runawayFromTarget( MeatEater.LIST.get(nObj.idx) );
                 }
             }
         } else {
             // ランダムウォーク
             // 水中かどうか
-            NearestObj nearestObj = super.getNearestObj(Water.LIST);
-            if(nearestObj.isHit) {
+//            NearestObj nearestObj = super.getNearestObj(Water.LIST);
+            nObj = nearestObj.get(this, Water.LIST);
+            if(nObj.isHit) {
                 super.life++;
                 super.untilEat++;
             }
             
             // 肉食から逃げる判断
-            nearestObj = super.getNearestObj(MeatEater.LIST);
-            if(nearestObj.distance < VIEW_RANGE) {
-                this.runawayFromTarget( MeatEater.LIST.get(nearestObj.idx) );
+//            nearestObj = super.getNearestObj(MeatEater.LIST);
+            nObj = new NearestObj().get(this, MeatEater.LIST);
+            if(nObj.distance < VIEW_RANGE) {
+                this.runawayFromTarget( MeatEater.LIST.get(nObj.idx) );
             }
         }
         
