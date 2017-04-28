@@ -2,6 +2,7 @@ package ecosystem;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
 public class MeatEater extends MainObj {
@@ -125,6 +126,15 @@ public class MeatEater extends MainObj {
     public void draw(Graphics g) {
         super.draw(g);
         super.drawEx(g, MeatEater.LIST, PlantEater.LIST);
+        
+        if(this.targetX < 0.0f && this.targetY < 0.0f) {
+            return;
+        }
+        Stage stage = Ecosystem.STAGE;
+        Point2D.Float targetPoint = stage.getPoint(this.targetX + HALF_OBJ_SIZE, this.targetY + HALF_OBJ_SIZE);
+        Point2D.Float point = stage.getPoint(this.x + HALF_OBJ_SIZE, this.y + HALF_OBJ_SIZE);
+        g.setColor(Color.black);
+        g.drawLine((int)point.x, (int)point.y, (int)targetPoint.x, (int)targetPoint.y);
     }
     
     

@@ -67,7 +67,7 @@ public class NearestObj {
         double distance;
         for(int i = targetList.size() - 1; i >= 0; i--) {
             target = targetList.get(i);
-            if(target.equals(obj) || obj.gen >= target.gen) {
+            if(target.equals(obj) || obj.gen <= target.gen) {
                 continue;
             }
             distance = Math.pow(obj.x - target.x, 2) + Math.pow(obj.y - target.y, 2);
