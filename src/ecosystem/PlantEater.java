@@ -51,7 +51,6 @@ public class PlantEater extends MainObj {
         NearestObj nObj;
         if(super.untilCopulate <= 0 && !super.isLimit) {
             // 交尾可能
-//            NearestObj nearestObj = super.getNearestObj(LIST);
             nObj = nearestObj.get(this, LIST);
             if(nObj.isHit) {
                 // 触れていれば交尾
@@ -61,7 +60,6 @@ public class PlantEater extends MainObj {
                 super.goToTarget( LIST.get(nObj.idx) );
             } else {
                 // 視界内にいなければ肉食から逃げる判断
-//                nearestObj = super.getNearestObj(MeatEater.LIST);
                 nObj = new NearestObj().get(this, MeatEater.LIST);
                 if(nObj.distance < VIEW_RANGE) {
                     this.runawayFromTarget( MeatEater.LIST.get(nObj.idx) );
@@ -74,7 +72,6 @@ public class PlantEater extends MainObj {
             tmpList.addAll(Plant.LIST);
             tmpList.addAll(Water.LIST);
             
-//            NearestObj nearestObj = super.getNearestObj(tmpList);
             nObj = nearestObj.get(this, tmpList);
             // idxから植物か水か判定
             MainObj target = null;
@@ -93,7 +90,6 @@ public class PlantEater extends MainObj {
                 super.goToTarget(target);
             } else if(!super.isLimit && super.isHungry) {
                 // 視界内になければ肉食から逃げる判断
-//                nearestObj = super.getNearestObj(MeatEater.LIST);
                 nObj = new NearestObj().get(this, MeatEater.LIST);
                 if(nObj.distance < VIEW_RANGE) {
                     this.runawayFromTarget( MeatEater.LIST.get(nObj.idx) );
@@ -102,7 +98,6 @@ public class PlantEater extends MainObj {
         } else {
             // ランダムウォーク
             // 水中かどうか
-//            NearestObj nearestObj = super.getNearestObj(Water.LIST);
             nObj = nearestObj.get(this, Water.LIST);
             if(nObj.isHit) {
                 super.life++;
@@ -110,7 +105,6 @@ public class PlantEater extends MainObj {
             }
             
             // 肉食から逃げる判断
-//            nearestObj = super.getNearestObj(MeatEater.LIST);
             nObj = new NearestObj().get(this, MeatEater.LIST);
             if(nObj.distance < VIEW_RANGE) {
                 this.runawayFromTarget( MeatEater.LIST.get(nObj.idx) );

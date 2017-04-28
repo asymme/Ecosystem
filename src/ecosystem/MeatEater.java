@@ -6,10 +6,14 @@ import java.util.ArrayList;
 
 public class MeatEater extends MainObj {
     public static ArrayList<MeatEater> LIST = new ArrayList<MeatEater>();
+    public int gen;
+    private float targetX, targetY;
     
     public MeatEater() {
         super();
-        this.hungry = this.life / 8;
+        this.gen = 0;
+        this.targetX = this.targetY = -1.0f;
+        
         super.r = 200;
         super.g = super.b = 64;
         super.col = new Color(super.r, super.g, super.b);
@@ -31,6 +35,9 @@ public class MeatEater extends MainObj {
         } else if(super.life < super.hungry && !super.isLimit) {
             // 空腹限界
             super.setLimit();
+            if(this.targetX >= 0.0f && this.targetY >= 0.0f) {
+                this.targetX = this.targetY = -1.0f;
+            }
         }
         
         if(--super.repeat <= 0) {
@@ -42,7 +49,6 @@ public class MeatEater extends MainObj {
         NearestObj nObj;
         if(super.untilCopulate <= 0 && !super.isLimit) {
             // 交尾可能
-//            NearestObj nearestObj = super.getNearestObj(LIST);
             nObj = nearestObj.get(this, LIST);
             if(nObj.isHit) {
                 // 触れていれば交尾
@@ -50,6 +56,8 @@ public class MeatEater extends MainObj {
             } else if(nObj.distance < VIEW_RANGE) {
                 // 視界内ならば同族種に向かう
                 super.goToTarget( LIST.get(nObj.idx) );
+            } else {
+                this.goToChief();
             }
         } else if(super.isHungry) {
             // 捕食可能
@@ -58,7 +66,6 @@ public class MeatEater extends MainObj {
             tmpList.addAll(Water.LIST);
             tmpList.addAll(PlantEater.LIST);
             
-//            NearestObj nearestObj = super.getNearestObj(tmpList);
             nObj = nearestObj.get(this, tmpList);
             // idxから草食か水か判定
             MainObj target = null;
@@ -75,16 +82,18 @@ public class MeatEater extends MainObj {
             } else if(super.isLimit && nObj.distance < VIEW_RANGE) {
                 // 視界内ならば捕食対象へ向かう
                 super.goToTarget(target);
+            } else if(!super.isLimit) {
+                this.goToChief();
             }
         } else {
             // ランダムウォーク
             // 水中かどうか
-//            NearestObj nearestObj = super.getNearestObj(Water.LIST);
             nObj = nearestObj.get(this, Water.LIST);
             if(nObj.isHit) {
                 super.life++;
                 super.untilEat++;
             }
+            this.goToChief();
         }
         
         super.walk();
@@ -113,5 +122,37 @@ public class MeatEater extends MainObj {
     public void draw(Graphics g) {
         super.draw(g);
         super.drawEx(g, MeatEater.LIST, PlantEater.LIST);
+    }
+    
+    
+    /**
+     * 群れの長に向かう
+     */
+    private void goToChief() {
+        if(this.targetX >= 0.0f && this.targetY >= 0.0f) {
+            if(Math.pow(this.targetX - this.x, 2) + Math.pow(this.targetY - this.y, 2) < Math.pow(HALF_OBJ_SIZE, 2)) {
+                // 目的地到達
+                this.setChiefPos();
+            } else if(super.degree >= 360) {
+                // 停止
+                return;
+            } else {
+                // 方向変更
+                double radian = Math.atan2(this.targetY - this.y, this.targetX - this.x);
+                super.degree = (int)Math.round(radian * 180.0d / Math.PI);
+            }
+        } else {
+            this.setChiefPos();
+        }
+    }
+    private void setChiefPos() {
+        NearestObj obj = new NearestObj().searchChief(this);
+        if(obj.idx >= 0) {
+            MeatEater target = LIST.get(obj.idx);
+            this.targetX = target.x;
+            this.targetY = target.y;
+        } else {
+            this.targetX = this.targetY = -1.0f;
+        }
     }
 }
