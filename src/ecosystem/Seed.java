@@ -8,7 +8,7 @@ public class Seed extends MainObj {
     private int wait;
     public Seed() {
         super();
-        this.wait = super.max / 4;
+        this.wait = super.max;
         super.r = super.g = super.b = 222;
         super.col = new Color(super.r, super.g, super.b, 222);
         LIST.add(this);

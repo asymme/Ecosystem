@@ -49,4 +49,33 @@ public class NearestObj {
         }
         return this;
     }
-}
+    
+    
+    /**
+     * 群れの長を探す
+     * @param obj
+     * @return 対象オブジェクト
+     */
+    public NearestObj searchChief(MeatEater obj) {
+        ArrayList<MeatEater> targetList = MeatEater.LIST;
+        if(targetList.size() == 0) {
+            // 対象オブジェクトリストなし
+            return this;
+        }
+        
+        MeatEater target;
+        double distance;
+        for(int i = targetList.size() - 1; i >= 0; i--) {
+            target = targetList.get(i);
+            if(target.equals(obj) || obj.gen >= target.gen) {
+                continue;
+            }
+            distance = Math.pow(obj.x - target.x, 2) + Math.pow(obj.y - target.y, 2);
+            if(distance < Ecosystem.VIEW_RANGE) {
+                this.distance = distance;
+                this.idx = i;
+                break;
+            }
+        }
+        return this;
+    }}

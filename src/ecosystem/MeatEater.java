@@ -111,10 +111,13 @@ public class MeatEater extends MainObj {
     public void copulate(MainObj target) {
         int len = super.untilCopulate * target.untilCopulate + 1;
         MeatEater newObj;
+        int ownGen = this.gen;
+        int targetGen = ((MeatEater)target).gen;
         for(int i = 0; i < len; i++) {
             newObj = new MeatEater();
             newObj.x = super.x;
             newObj.y = super.y;
+            newObj.gen = (ownGen >= targetGen) ? ownGen + 1 : targetGen + 1;
         }
         super.copulate(target);
     }
