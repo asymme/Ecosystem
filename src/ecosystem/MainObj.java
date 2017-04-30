@@ -151,8 +151,8 @@ public class MainObj {
      * targetに向かう
      * @param target 対象オブジェクト
      */
-    public void goToTarget(MainObj target) {
-        double radian = Math.atan2(target.y - this.y, target.x - this.x);
+    public void goToTarget(float targetX, float targetY) {
+        double radian = Math.atan2(targetY - this.y, targetX - this.x);
         this.degree = (int)Math.round(radian * 180.0d / Math.PI);
     }
     

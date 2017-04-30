@@ -57,7 +57,8 @@ public class PlantEater extends MainObj {
                 this.copulate( LIST.get(nObj.idx) );
             } else if(nObj.distance < VIEW_RANGE) {
                 // 視界内ならば同族種に向かう
-                super.goToTarget( LIST.get(nObj.idx) );
+                PlantEater target = LIST.get(nObj.idx);
+                super.goToTarget(target.x, target.y);
             } else {
                 // 視界内にいなければ肉食から逃げる判断
                 nObj = new NearestObj().get(this, MeatEater.LIST);
@@ -87,7 +88,7 @@ public class PlantEater extends MainObj {
                 super.eat(target);
             } else if(super.isLimit && nObj.distance < VIEW_RANGE) {
                 // 視界内ならば捕食対象へ向かう
-                super.goToTarget(target);
+                super.goToTarget(target.x, target.y);
             } else if(!super.isLimit && super.isHungry) {
                 // 視界内になければ肉食から逃げる判断
                 nObj = new NearestObj().get(this, MeatEater.LIST);

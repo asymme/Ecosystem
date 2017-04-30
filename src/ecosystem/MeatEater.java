@@ -56,7 +56,8 @@ public class MeatEater extends MainObj {
                 this.copulate( LIST.get(nObj.idx) );
             } else if(nObj.distance < VIEW_RANGE) {
                 // 視界内ならば同族種に向かう
-                super.goToTarget( LIST.get(nObj.idx) );
+                MeatEater target = LIST.get(nObj.idx);
+                super.goToTarget(target.x, target.y);
             } else {
                 this.goToChief();
             }
@@ -82,7 +83,7 @@ public class MeatEater extends MainObj {
                 super.eat(target);
             } else if(super.isLimit && nObj.distance < VIEW_RANGE) {
                 // 視界内ならば捕食対象へ向かう
-                super.goToTarget(target);
+                super.goToTarget(target.x, target.y);
             } else if(!super.isLimit) {
                 this.goToChief();
             }
@@ -127,12 +128,12 @@ public class MeatEater extends MainObj {
         super.draw(g);
         super.drawEx(g, MeatEater.LIST, PlantEater.LIST);
         
-        if(this.targetX < 0.0f && this.targetY < 0.0f) {
+        if(this.targetX < 0.0f && this.targetY < 0.0f || Ecosystem.HIGH_LOAD) {
             return;
         }
         Stage stage = Ecosystem.STAGE;
+        Point2D.Float point = stage.getPoint(super.x + HALF_OBJ_SIZE, super.y + HALF_OBJ_SIZE);
         Point2D.Float targetPoint = stage.getPoint(this.targetX + HALF_OBJ_SIZE, this.targetY + HALF_OBJ_SIZE);
-        Point2D.Float point = stage.getPoint(this.x + HALF_OBJ_SIZE, this.y + HALF_OBJ_SIZE);
         g.setColor(Color.black);
         g.drawLine((int)point.x, (int)point.y, (int)targetPoint.x, (int)targetPoint.y);
     }
@@ -142,30 +143,22 @@ public class MeatEater extends MainObj {
      * 群れの長に向かう
      */
     private void goToChief() {
-        if(this.targetX >= 0.0f && this.targetY >= 0.0f) {
-            if(Math.pow(this.targetX - this.x, 2) + Math.pow(this.targetY - this.y, 2) < Math.pow(HALF_OBJ_SIZE, 2)) {
-                // 目的地到達
-                this.setChiefPos();
-            } else if(super.degree >= 360) {
-                // 停止
-                return;
+        if((this.targetX < 0 && this.targetY < 0) || Math.pow(this.targetX - super.x, 2) + Math.pow(this.targetY - super.y, 2) < Math.pow(HALF_OBJ_SIZE, 2)) {
+            // 未設定または目的地到達
+            NearestObj obj = new NearestObj().searchChief(this);
+            if(obj.idx >= 0) {
+                MeatEater target = LIST.get(obj.idx);
+                this.targetX = target.x;
+                this.targetY = target.y;
             } else {
-                // 方向変更
-                double radian = Math.atan2(this.targetY - this.y, this.targetX - this.x);
-                super.degree = (int)Math.round(radian * 180.0d / Math.PI);
+                this.targetX = this.targetY = -1.0f;
             }
+        } else if(super.degree >= 360) {
+            // 停止
+            return;
         } else {
-            this.setChiefPos();
-        }
-    }
-    private void setChiefPos() {
-        NearestObj obj = new NearestObj().searchChief(this);
-        if(obj.idx >= 0) {
-            MeatEater target = LIST.get(obj.idx);
-            this.targetX = target.x;
-            this.targetY = target.y;
-        } else {
-            this.targetX = this.targetY = -1.0f;
+            // 方向変更
+            super.goToTarget(this.targetX, this.targetY);
         }
     }
 }
