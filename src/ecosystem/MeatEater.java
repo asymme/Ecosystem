@@ -126,14 +126,14 @@ public class MeatEater extends MainObj {
     
     public void draw(Graphics g) {
         super.draw(g);
-        super.drawEx(g, MeatEater.LIST, PlantEater.LIST);
+        Point2D.Float point = super.drawEx(g, MeatEater.LIST, PlantEater.LIST);
         
-        if(this.targetX < 0.0f && this.targetY < 0.0f || Ecosystem.HIGH_LOAD) {
+        if(this.targetX < 0.0f && this.targetY < 0.0f || point == null) {
             return;
         }
-        Stage stage = Ecosystem.STAGE;
-        Point2D.Float point = stage.getPoint(super.x + HALF_OBJ_SIZE, super.y + HALF_OBJ_SIZE);
-        Point2D.Float targetPoint = stage.getPoint(this.targetX + HALF_OBJ_SIZE, this.targetY + HALF_OBJ_SIZE);
+//        Stage stage = Ecosystem.STAGE;
+//        Point2D.Float point = stage.getPoint(super.x + HALF_OBJ_SIZE, super.y + HALF_OBJ_SIZE);
+        Point2D.Float targetPoint = Ecosystem.STAGE.getPoint(this.targetX + HALF_OBJ_SIZE, this.targetY + HALF_OBJ_SIZE);
         g.setColor(Color.black);
         g.drawLine((int)point.x, (int)point.y, (int)targetPoint.x, (int)targetPoint.y);
     }
@@ -143,7 +143,7 @@ public class MeatEater extends MainObj {
      * 群れの長に向かう
      */
     private void goToChief() {
-        if((this.targetX < 0 && this.targetY < 0) || Math.pow(this.targetX - super.x, 2) + Math.pow(this.targetY - super.y, 2) < Math.pow(HALF_OBJ_SIZE, 2)) {
+        if((this.targetX < 0.0f && this.targetY < 0.0f) || Math.pow(this.targetX - super.x, 2) + Math.pow(this.targetY - super.y, 2) < Math.pow(HALF_OBJ_SIZE, 2)) {
             // 未設定または目的地到達
             NearestObj obj = new NearestObj().searchChief(this);
             if(obj.idx >= 0) {

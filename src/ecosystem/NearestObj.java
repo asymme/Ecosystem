@@ -13,6 +13,13 @@ public class NearestObj {
         this.idx = -1;
     }
     
+    public void init() {
+        this.isHit = false;
+        this.distance = Double.MAX_VALUE;
+        this.idx = -1;
+    }
+    
+    
     /**
      * 最も近いオブジェクトを取得
      * @param obj

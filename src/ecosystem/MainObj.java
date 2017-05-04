@@ -213,25 +213,25 @@ public class MainObj {
      * @param ownList 同族種のArrayList
      * @param foodList 食事対象のArrayList
      */
-    public void drawEx(Graphics g, ArrayList<? extends MainObj> ownList, ArrayList<? extends MainObj> foodList) {
+    public Point2D.Float drawEx(Graphics g, ArrayList<? extends MainObj> ownList, ArrayList<? extends MainObj> foodList) {
         if(Ecosystem.HIGH_LOAD) {
             // 処理落ち
-            return;
+            return null;
         }
         
         NearestObj nObj;
         Stage stage = Ecosystem.STAGE;
         Point2D.Float point = stage.getPoint(this.x + HALF_OBJ_SIZE, this.y + HALF_OBJ_SIZE);
-//        int yRatio = Ecosystem.QUARTER_VIEW.compareTo(false) + 1;    // QUARTER: 2, 2D: 1
         if(this.untilCopulate <= 0) {
             // 視界描画
+//            int yRatio = Ecosystem.QUARTER_VIEW.compareTo(false) + 1;    // QUARTER: 2, 2D: 1
 //            g.setColor(new Color(255 - this.col.getRed(), 255 - this.col.getGreen(), 255 - this.col.getBlue(), 64));
 //            float range  = (float)( Math.sqrt(VIEW_RANGE) * Ecosystem.OBJ_RATIO );
 //            g.fillOval((int)(point.x - range / 2), (int)(point.y - range / 2 / yRatio), (int)range, (int)(range / yRatio));
             
             nObj = new NearestObj().get(this, ownList);
             if(nObj.idx < 0 || nObj.distance > VIEW_RANGE) {
-                return;
+                return point;
             }
             MainObj target = ownList.get(nObj.idx);
             Point2D.Float targetPoint = stage.getPoint(target.x + HALF_OBJ_SIZE, target.y + HALF_OBJ_SIZE);
@@ -243,7 +243,7 @@ public class MainObj {
         if(this.isLimit) {
             nObj = new NearestObj().get(this, foodList);
             if(nObj.idx < 0 || nObj.distance > VIEW_RANGE) {
-                return;
+                return point;
             }
             MainObj target = foodList.get(nObj.idx);
             Point2D.Float targetPoint = stage.getPoint(target.x + HALF_OBJ_SIZE, target.y + HALF_OBJ_SIZE);
@@ -251,5 +251,6 @@ public class MainObj {
             g.setColor(Color.white);
             g.drawLine((int)point.x, (int)point.y, (int)targetPoint.x, (int)targetPoint.y);
         }
+        return point;
     }
 }
