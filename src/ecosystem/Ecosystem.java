@@ -107,6 +107,11 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
     // マウス座標
     private static int mousePressedX, mousePressedY;
     
+    // 処理落ち時点のオブジェクト数
+    private static int MAX_DISP_OBJ;
+    
+    // オブジェクト総数
+    private static int TOTAL;
     
     /**
      * コンストラクタ
@@ -179,7 +184,7 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
         
         
         JPanel statPanel = new JPanel();
-        statPanel.setPreferredSize(new Dimension(100, FRAME_HEIGHT));
+        statPanel.setPreferredSize(new Dimension(110, FRAME_HEIGHT));
         statPanel.setBackground(Color.white);
         statLabel = new JLabel();
         statPanel.add(statLabel);
@@ -386,29 +391,25 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
         int pl = Plant.LIST.size();
         int sd = Seed.LIST.size();
         int wt = Water.LIST.size();
-        int total = me + pe + pl + sd + wt;
-        if(me + pe + pl + sd == 0) {
-            THREAD = null;
-        }
-        if(total == 0) {
-            // 0除算回避
-            total = 1;
+        TOTAL = me + pe + pl + sd + wt;
+        try {
+            // グラフ
+            g.setColor(Color.cyan);
+            g.fillRect(0, GRAPH_Y, TOTAL * STAGE_WIDTH / TOTAL, GRAPH_HEIGHT);
+            g.setColor(Color.lightGray);
+            g.fillRect(0, GRAPH_Y, (me + pe + pl + sd) * STAGE_WIDTH / TOTAL, GRAPH_HEIGHT);
+            g.setColor(Color.green);
+            g.fillRect(0, GRAPH_Y, (me + pe + pl) * STAGE_WIDTH / TOTAL, GRAPH_HEIGHT);
+            g.setColor(Color.blue);
+            g.fillRect(0, GRAPH_Y, (me + pe) * STAGE_WIDTH / TOTAL, GRAPH_HEIGHT);
+            g.setColor(Color.red);
+            g.fillRect(0, GRAPH_Y, me * STAGE_WIDTH / TOTAL, GRAPH_HEIGHT);
+        } catch(ArithmeticException e) {
+            // TOTAL=0
             BORDER_X = this.getWidth() - 1;
             BORDER_Y = this.getHeight() - 1;
             GRAPH_Y = BORDER_Y - GRAPH_HEIGHT;
         }
-        
-        // グラフ
-        g.setColor(Color.cyan);
-        g.fillRect(0, GRAPH_Y, (me + pe + pl + sd + wt) * STAGE_WIDTH / total, GRAPH_HEIGHT);
-        g.setColor(Color.lightGray);
-        g.fillRect(0, GRAPH_Y, (me + pe + pl + sd) * STAGE_WIDTH / total, GRAPH_HEIGHT);
-        g.setColor(Color.green);
-        g.fillRect(0, GRAPH_Y, (me + pe + pl) * STAGE_WIDTH / total, GRAPH_HEIGHT);
-        g.setColor(Color.blue);
-        g.fillRect(0, GRAPH_Y, (me + pe) * STAGE_WIDTH / total, GRAPH_HEIGHT);
-        g.setColor(Color.red);
-        g.fillRect(0, GRAPH_Y, me * STAGE_WIDTH / total, GRAPH_HEIGHT);
         
         // 枠線
         g.setColor(Color.black);
@@ -442,6 +443,9 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
             AVERAGE_FPS = String.valueOf(average) + "000";
             AVERAGE_FPS = AVERAGE_FPS.substring(0, 6);
             
+            if(COUNTER < FPS - 1) {
+                MAX_DISP_OBJ = TOTAL;
+            }
             NOW_FPS = String.valueOf(COUNTER);
             COUNTER = 0;
             BASE_TIME = nowTime;
@@ -457,9 +461,14 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
         str += "<font color=gray size=4>種子：" + String.valueOf(Seed.LIST.size()) + "</font><br>";
         str += "<font color=aqua size=4>　水：" + String.valueOf(Water.LIST.size()) + "</font><br><br>";
         str += "<font color=black size=4>" + NOW_FPS + "/" + String.valueOf(FPS) + " fps<font><br>";
-        str += "<font color=black size=4>(" + AVERAGE_FPS + " fps)<font>";
+        str += "<font color=black size=4>(" + AVERAGE_FPS + " fps)<font><br><br>";
+        str += "<font color=black size=4>MAX：" + MAX_DISP_OBJ + "<font><br>";
         str += "</b></p></body></html>";
         statLabel.setText(str);
+        
+        if(TOTAL == 0) {
+            THREAD = null;
+        }
     }
     
     /**
@@ -555,6 +564,7 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
             if(THREAD == null) {
                 repaint();
             }
+            MAX_DISP_OBJ = 0;
         }
     }
     
@@ -609,7 +619,6 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
             errorTime = availableTime - processingTime;
             baseTime = System.currentTimeMillis();
         }
-        repaint();
     }
     
     public static void main(String[] args) {
