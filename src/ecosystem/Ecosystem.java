@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Container;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseWheelEvent;
@@ -119,28 +120,42 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
         TIMER = new Timer(1000 / FPS, this);
         THREAD = new Thread(this);
         
+        Font font;
         changeViewBtn = new JButton("Change View");
         changeViewBtn.addActionListener(this);
+        font = changeViewBtn.getFont();
+        changeViewBtn.setFont( new Font(font.getName(), Font.BOLD, font.getSize()) );
+        changeViewBtn.setForeground(Color.darkGray);
+        
         startBtn = new JButton("Start");
         startBtn.addActionListener(this);
+        font = startBtn.getFont();
+        startBtn.setFont( new Font(font.getName(), Font.BOLD, font.getSize()) );
+        startBtn.setForeground(Color.darkGray);
         
         this.setBackground(new Color(237, 237, 237));
         this.setLayout(new BorderLayout());
         
         JPanel configPanel = new JPanel();
-        configPanel.setPreferredSize(new Dimension(FRAME_WIDTH, 50));
         configPanel.setBackground(Color.white);
         configPanel.add(changeViewBtn);
         
-        JLabel[] label= new JLabel[3];
+        JLabel[] label= new JLabel[4];
         label[0] = new JLabel("肉食：");
         label[1] = new JLabel("草食：");
         label[2] = new JLabel("植物：");
+        label[3] = new JLabel("水：");
+        for(int i = 0; i < label.length; i++) {
+            font = label[i].getFont();
+            label[i].setFont( new Font(font.getName(), Font.BOLD, font.getSize() + 2) );
+            label[i].setForeground(Color.gray);
+        }
         
-        numField = new JTextField[3];
+        numField = new JTextField[4];
         numField[0] = new JTextField(String.valueOf(MEAT_EATER), 5);
         numField[1] = new JTextField(String.valueOf(PLANT_EATER), 5);
         numField[2] = new JTextField(String.valueOf(PLANT), 5);
+        numField[3] = new JTextField(String.valueOf(WATER), 5);
         
         for(int i = 0; i < numField.length; i++) {
             configPanel.add(label[i]);
@@ -148,20 +163,27 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
         }
         configPanel.add(startBtn);
         
+        
         Hashtable<Integer, JComponent> table = new Hashtable<Integer, JComponent>();
         table.put(new Integer(1), new JLabel("1"));
-        table.put(new Integer(FPS), new JLabel(String.valueOf(FPS) + "(fps)"));
+        table.put(new Integer(FPS / 2), new JLabel(String.valueOf(FPS / 2)));
+        table.put(new Integer(FPS), new JLabel(String.valueOf(FPS) + " (fps)"));
         fpsSlider = new JSlider(1, FPS, FPS);
         fpsSlider.addChangeListener(this);
         fpsSlider.setLabelTable(table);
         fpsSlider.setPaintLabels(true);
-        configPanel.add(fpsSlider);
+        fpsSlider.setOrientation(JSlider.VERTICAL);
+        fpsSlider.setMajorTickSpacing(10);
+        fpsSlider.setMinorTickSpacing(2);
+        fpsSlider.setPaintTicks(true);
+        
         
         JPanel statPanel = new JPanel();
         statPanel.setPreferredSize(new Dimension(100, FRAME_HEIGHT));
         statPanel.setBackground(Color.white);
         statLabel = new JLabel();
         statPanel.add(statLabel);
+        statPanel.add(fpsSlider);
         
         Container contentPane = mainFrame.getContentPane();
         contentPane.add(this, BorderLayout.CENTER);
@@ -469,13 +491,15 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
             }
             
             // 水(集合させる)
-            Water newObj = new Water();
-            newObj.x = (float)(Math.random() * ENABLE_WIDTH + Math.random() * ENABLE_WIDTH) / 2.0f;
-            newObj.y = (float)(Math.random() * ENABLE_HEIGHT + Math.random() * ENABLE_HEIGHT) / 2.0f;
-            
+            Water newObj;
+            if(startLength[3] > 0) {
+                newObj = new Water();
+                newObj.x = (float)(Math.random() * ENABLE_WIDTH + Math.random() * ENABLE_WIDTH) / 2.0f;
+                newObj.y = (float)(Math.random() * ENABLE_HEIGHT + Math.random() * ENABLE_HEIGHT) / 2.0f;
+            }
             float rndX, rndY, newX, newY;
             int idx;
-            while(Water.LIST.size() < WATER) {
+            while(Water.LIST.size() < startLength[3]) {
                 idx = (int)Math.floor( Math.random() * Water.LIST.size() );
                 Water obj = Water.LIST.get(idx);
                 // -1 to +1
