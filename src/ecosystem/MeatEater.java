@@ -62,21 +62,9 @@ public class MeatEater extends MainObj {
             }
         } else if(super.isHungry) {
             // 捕食可能
-            // 草食、水を混ぜたリストを作成
-            ArrayList<MainObj> tmpList = new ArrayList<MainObj>();
-            tmpList.addAll(Water.LIST);
-            tmpList.addAll(PlantEater.LIST);
-            
-            nObj = NEAREST_OBJ.get(this, tmpList);
-            // idxから草食か水か判定
-            MainObj target = null;
-            if(nObj.idx < 0) {
-                // 近くになし
-            } else if(nObj.idx < Water.LIST.size()) {
-                target = Water.LIST.get(nObj.idx);
-            } else {
-                target = PlantEater.LIST.get(nObj.idx - Water.LIST.size());
-            }
+            ArrayList<MainObj> foodList = super.getFoodList(PlantEater.LIST);
+            nObj = NEAREST_OBJ.get(this, foodList);
+            MainObj target = super.getTargetFood(nObj, PlantEater.LIST);
             if(nObj.isHit) {
                 // 触れていれば捕食
                 super.eat(target);

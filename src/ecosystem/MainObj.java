@@ -31,7 +31,7 @@ public class MainObj {
     public float dx, dy;    // 移動量
     public int life, max;    // 生命力
     public int hungry;    // 空腹
-    public Boolean isHungry;    // 食事可能
+    public Boolean isHungry;    // 捕食可能
     public Boolean isLimit;    // 空腹の限界
     public int ate;    // 捕食数
     public int untilEat;    // 捕食可能フレーム
@@ -213,7 +213,7 @@ public class MainObj {
      * 視界など実体以外を描画
      * @param g Graphicsオブジェクト
      * @param ownList 同族種のArrayList
-     * @param foodList 食事対象のArrayList
+     * @param foodList 捕食対象のArrayList
      */
     public Point2D.Float drawEx(Graphics g, ArrayList<? extends MainObj> ownList, ArrayList<? extends MainObj> foodList) {
         if(Ecosystem.HIGH_LOAD) {
@@ -242,16 +242,52 @@ public class MainObj {
         }
         
         if(this.isLimit) {
-            nObj = NEAREST_OBJ.get(this, foodList);
-            if(nObj.idx < 0 || nObj.distance > VIEW_RANGE) {
+            ArrayList<MainObj> tmpList = this.getFoodList(foodList);
+            nObj = NEAREST_OBJ.get(this, tmpList);
+            MainObj target = this.getTargetFood(nObj, foodList);
+            if(target == null) {
+                // 捕食対象が近くになし
                 return point;
             }
-            MainObj target = foodList.get(nObj.idx);
             Point2D.Float targetPoint = STAGE.getPoint(target.x + HALF_OBJ_SIZE, target.y + HALF_OBJ_SIZE);
             
             g.setColor(Color.white);
             g.drawLine((int)point.x, (int)point.y, (int)targetPoint.x, (int)targetPoint.y);
         }
         return point;
+    }
+    
+    
+    /**
+     * メインの捕食対象と共通の捕食対象を混ぜたリストを作成
+     * @param foodList メインの捕食対象
+     * @return
+     */
+    public ArrayList<MainObj> getFoodList(ArrayList<? extends MainObj> foodList) {
+        ArrayList<MainObj> tmpList = new ArrayList<MainObj>();
+        tmpList.addAll(foodList);
+        tmpList.addAll(Water.LIST);
+        return tmpList;
+    }
+    
+    
+    /**
+     * ターゲットとなる捕食対象を取得
+     * @param nObj 一番近いオブジェクト情報
+     * @param foodList メインの捕食対象リスト
+     * @return
+     */
+    public MainObj getTargetFood(NearestObj nObj, ArrayList<? extends MainObj> foodList) {
+        // idxからメインの捕食対象か水か判定
+        MainObj target;
+        if(nObj.idx < 0 || nObj.distance > VIEW_RANGE) {
+            // 近くになし
+            target = null;
+        } else if(nObj.idx < foodList.size()) {
+            target = foodList.get(nObj.idx);
+        } else {
+            target = Water.LIST.get(nObj.idx - foodList.size());
+        }
+        return target;
     }
 }

@@ -67,21 +67,9 @@ public class PlantEater extends MainObj {
             }
         } else if(super.isHungry) {
             // 捕食可能
-            // 植物、水を混ぜたリストを作成
-            ArrayList<MainObj> tmpList = new ArrayList<MainObj>();
-            tmpList.addAll(Plant.LIST);
-            tmpList.addAll(Water.LIST);
-            
-            nObj = NEAREST_OBJ.get(this, tmpList);
-            // idxから植物か水か判定
-            MainObj target = null;
-            if(nObj.idx < 0) {
-                // 近くになし
-            } else if(nObj.idx < Plant.LIST.size()) {
-                target = Plant.LIST.get(nObj.idx);
-            } else {
-                target = Water.LIST.get(nObj.idx - Plant.LIST.size());
-            }
+            ArrayList<MainObj> foodList = super.getFoodList(Plant.LIST);
+            nObj = NEAREST_OBJ.get(this, foodList);
+            MainObj target = super.getTargetFood(nObj, Plant.LIST);
             if(nObj.isHit) {
                 // 触れていれば捕食
                 super.eat(target);
