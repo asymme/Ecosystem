@@ -8,12 +8,10 @@ public class NearestObj {
     public int idx;
     public NearestObj() {
         // コンストラクタ
-        this.isHit = false;
-        this.distance = Double.MAX_VALUE;
-        this.idx = -1;
+        this.init();
     }
     
-    public void init() {
+    private void init() {
         this.isHit = false;
         this.distance = Double.MAX_VALUE;
         this.idx = -1;
@@ -27,6 +25,7 @@ public class NearestObj {
      * @return オブジェクト情報
      */
     public NearestObj get(MainObj obj, ArrayList<? extends MainObj> targetList) {
+        this.init();
         if(targetList.size() == 0) {
             // 対象オブジェクトリストなし
             return this;
@@ -64,6 +63,7 @@ public class NearestObj {
      * @return 対象オブジェクト
      */
     public NearestObj searchChief(MeatEater obj) {
+        this.init();
         ArrayList<MeatEater> targetList = MeatEater.LIST;
         if(targetList.size() == 0) {
             // 対象オブジェクトリストなし
@@ -85,4 +85,6 @@ public class NearestObj {
             }
         }
         return this;
-    }}
+    }
+}
+

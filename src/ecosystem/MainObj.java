@@ -10,6 +10,8 @@ public class MainObj {
     private static final int DISP_HEIGHT = Ecosystem.DISP_HEIGHT;
     private static final int ENABLE_WIDTH = Ecosystem.ENABLE_WIDTH;
     private static final int ENABLE_HEIGHT = Ecosystem.ENABLE_HEIGHT;
+    private static final Stage STAGE = Ecosystem.STAGE;
+    private static NearestObj NEAREST_OBJ = new NearestObj();
     
     public static final int OBJ_SIZE = Ecosystem.OBJ_SIZE;
     public static final int HALF_OBJ_SIZE = Ecosystem.HALF_OBJ_SIZE;
@@ -198,7 +200,7 @@ public class MainObj {
     public void draw(Graphics g) {
         float objectSize = OBJ_SIZE * Ecosystem.OBJ_RATIO;
         float halfSize = objectSize / 2;
-        Point2D.Float point = Ecosystem.STAGE.getPoint(this.x + Ecosystem.HALF_OBJ_SIZE, this.y + Ecosystem.HALF_OBJ_SIZE);
+        Point2D.Float point = STAGE.getPoint(this.x + HALF_OBJ_SIZE, this.y + HALF_OBJ_SIZE);
         // 映っている範囲内のみ描画
         if(point.x > 0 && point.x < STAGE_WIDTH && point.y > 0 && point.y < DISP_HEIGHT) {
             g.setColor(this.col);
@@ -220,8 +222,7 @@ public class MainObj {
         }
         
         NearestObj nObj;
-        Stage stage = Ecosystem.STAGE;
-        Point2D.Float point = stage.getPoint(this.x + HALF_OBJ_SIZE, this.y + HALF_OBJ_SIZE);
+        Point2D.Float point = STAGE.getPoint(this.x + HALF_OBJ_SIZE, this.y + HALF_OBJ_SIZE);
         if(this.untilCopulate <= 0) {
             // 視界描画
 //            int yRatio = Ecosystem.QUARTER_VIEW.compareTo(false) + 1;    // QUARTER: 2, 2D: 1
@@ -229,24 +230,24 @@ public class MainObj {
 //            float range  = (float)( Math.sqrt(VIEW_RANGE) * Ecosystem.OBJ_RATIO );
 //            g.fillOval((int)(point.x - range / 2), (int)(point.y - range / 2 / yRatio), (int)range, (int)(range / yRatio));
             
-            nObj = new NearestObj().get(this, ownList);
+            nObj = NEAREST_OBJ.get(this, ownList);
             if(nObj.idx < 0 || nObj.distance > VIEW_RANGE) {
                 return point;
             }
             MainObj target = ownList.get(nObj.idx);
-            Point2D.Float targetPoint = stage.getPoint(target.x + HALF_OBJ_SIZE, target.y + HALF_OBJ_SIZE);
+            Point2D.Float targetPoint = STAGE.getPoint(target.x + HALF_OBJ_SIZE, target.y + HALF_OBJ_SIZE);
             
             g.setColor(Color.pink);
             g.drawLine((int)point.x, (int)point.y, (int)targetPoint.x, (int)targetPoint.y);
         }
         
         if(this.isLimit) {
-            nObj = new NearestObj().get(this, foodList);
+            nObj = NEAREST_OBJ.get(this, foodList);
             if(nObj.idx < 0 || nObj.distance > VIEW_RANGE) {
                 return point;
             }
             MainObj target = foodList.get(nObj.idx);
-            Point2D.Float targetPoint = stage.getPoint(target.x + HALF_OBJ_SIZE, target.y + HALF_OBJ_SIZE);
+            Point2D.Float targetPoint = STAGE.getPoint(target.x + HALF_OBJ_SIZE, target.y + HALF_OBJ_SIZE);
             
             g.setColor(Color.white);
             g.drawLine((int)point.x, (int)point.y, (int)targetPoint.x, (int)targetPoint.y);

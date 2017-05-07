@@ -7,9 +7,9 @@ import java.util.ArrayList;
 
 public class MeatEater extends MainObj {
     public static ArrayList<MeatEater> LIST = new ArrayList<MeatEater>();
+    private static NearestObj NEAREST_OBJ = new NearestObj();
     public int gen;
     private float targetX, targetY;
-    
     public MeatEater() {
         super();
         this.gen = 0;
@@ -46,11 +46,10 @@ public class MeatEater extends MainObj {
             super.changeDirection(super.isLimit);
         }
         
-        NearestObj nearestObj = new NearestObj();
         NearestObj nObj;
         if(super.untilCopulate <= 0 && !super.isLimit) {
             // 交尾可能
-            nObj = nearestObj.get(this, LIST);
+            nObj = NEAREST_OBJ.get(this, LIST);
             if(nObj.isHit) {
                 // 触れていれば交尾
                 this.copulate( LIST.get(nObj.idx) );
@@ -68,7 +67,7 @@ public class MeatEater extends MainObj {
             tmpList.addAll(Water.LIST);
             tmpList.addAll(PlantEater.LIST);
             
-            nObj = nearestObj.get(this, tmpList);
+            nObj = NEAREST_OBJ.get(this, tmpList);
             // idxから草食か水か判定
             MainObj target = null;
             if(nObj.idx < 0) {
@@ -90,14 +89,13 @@ public class MeatEater extends MainObj {
         } else {
             // ランダムウォーク
             // 水中かどうか
-            nObj = nearestObj.get(this, Water.LIST);
+            nObj = NEAREST_OBJ.get(this, Water.LIST);
             if(nObj.isHit) {
                 super.life++;
                 super.untilEat++;
             }
             this.goToChief();
         }
-        
         super.walk();
     }
     
@@ -131,8 +129,6 @@ public class MeatEater extends MainObj {
         if(this.targetX < 0.0f && this.targetY < 0.0f || point == null) {
             return;
         }
-//        Stage stage = Ecosystem.STAGE;
-//        Point2D.Float point = stage.getPoint(super.x + HALF_OBJ_SIZE, super.y + HALF_OBJ_SIZE);
         Point2D.Float targetPoint = Ecosystem.STAGE.getPoint(this.targetX + HALF_OBJ_SIZE, this.targetY + HALF_OBJ_SIZE);
         g.setColor(Color.black);
         g.drawLine((int)point.x, (int)point.y, (int)targetPoint.x, (int)targetPoint.y);
@@ -145,9 +141,9 @@ public class MeatEater extends MainObj {
     private void goToChief() {
         if((this.targetX < 0.0f && this.targetY < 0.0f) || Math.pow(this.targetX - super.x, 2) + Math.pow(this.targetY - super.y, 2) < Math.pow(HALF_OBJ_SIZE, 2)) {
             // 未設定または目的地到達
-            NearestObj obj = new NearestObj().searchChief(this);
-            if(obj.idx >= 0) {
-                MeatEater target = LIST.get(obj.idx);
+            NearestObj nObj = NEAREST_OBJ.searchChief(this);
+            if(nObj.idx >= 0) {
+                MeatEater target = LIST.get(nObj.idx);
                 this.targetX = target.x;
                 this.targetY = target.y;
             } else {

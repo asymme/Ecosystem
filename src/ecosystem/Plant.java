@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public class Plant extends MainObj {
     public static ArrayList<Plant> LIST = new ArrayList<Plant>();
+    private static NearestObj NEAREST_OBJ = new NearestObj();
     public Plant() {
         super();
         super.g = 196;
@@ -28,7 +29,7 @@ public class Plant extends MainObj {
             super.col = new Color(222, 222, 127, 222);
         } else {
             // 水中かどうか
-            NearestObj nObj = new NearestObj().get(this, Water.LIST);
+            NearestObj nObj = NEAREST_OBJ.get(this, Water.LIST);
             if(nObj.isHit) {
                 super.life++;
                 Water.LIST.get(nObj.idx).life -= (int)Math.round( Math.pow( Math.random(), Integer.parseInt(Ecosystem.NOW_FPS) ) );
