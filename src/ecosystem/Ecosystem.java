@@ -13,7 +13,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 import javax.swing.JFrame;
@@ -332,66 +332,39 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
         }
     }
     
+    
+    /**
+     * 毎フレーム呼び出される処理
+     * @param g
+     * @param list
+     * @return オブジェクト数
+     */
+    private int drawObjects(Graphics g, ArrayList<? extends MainObj> list) {
+        MainObj obj;
+        for(int i = list.size() - 1; i >= 0; i--) {
+            obj = list.get(i);
+            obj.onEnterFrame();
+            if(list.contains(obj)) {
+                obj.draw(g);
+            }
+        }
+        return list.size();
+    }
+    
+    
     /**
      * Swingコンポーネント描画(repaintからの呼び出し)
      */
     @Override
     public void paintComponent(Graphics g) {
-        // reload
         STAGE.draw(g);
-        
-        MainObj obj;
-        // 種子
-        for(int i = Seed.LIST.size() - 1; i >= 0; i--) {
-            obj = Seed.LIST.get(i);
-            obj.onEnterFrame();
-            if(Seed.LIST.contains(obj)) {
-                obj.draw(g);
-            }
-        }
-        
-        // 植物
-        for(int i = Plant.LIST.size() - 1; i >= 0; i--) {
-            obj = Plant.LIST.get(i);
-            obj.onEnterFrame();
-            if(Plant.LIST.contains(obj)) {
-                obj.draw(g);
-            }
-        }
-        
-        // 水
-        for(int i = Water.LIST.size() - 1; i >= 0; i--) {
-            obj = Water.LIST.get(i);
-            obj.onEnterFrame();
-            if(Water.LIST.contains(obj)) {
-                obj.draw(g);
-            }
-        }
-        
-        // 草食
-        for(int i = PlantEater.LIST.size() - 1; i >= 0; i--) {
-            obj = PlantEater.LIST.get(i);
-            obj.onEnterFrame();
-            if(PlantEater.LIST.contains(obj)) {
-                obj.draw(g);
-            }
-        }
-        
-        // 肉食
-        for(int i = MeatEater.LIST.size() - 1; i >= 0; i--) {
-            obj = MeatEater.LIST.get(i);
-            obj.onEnterFrame();
-            if(MeatEater.LIST.contains(obj)) {
-                obj.draw(g);
-            }
-        }
-        
-        int me = MeatEater.LIST.size();
-        int pe = PlantEater.LIST.size();
-        int pl = Plant.LIST.size();
-        int sd = Seed.LIST.size();
-        int wt = Water.LIST.size();
+        int sd = this.drawObjects(g, Seed.LIST);
+        int pl = this.drawObjects(g, Plant.LIST);
+        int wt = this.drawObjects(g, Water.LIST);
+        int pe = this.drawObjects(g, PlantEater.LIST);
+        int me = this.drawObjects(g, MeatEater.LIST);
         TOTAL = me + pe + pl + sd + wt;
+        
         try {
             // グラフ
             g.setColor(Color.cyan);
@@ -421,9 +394,9 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
         long nowTime = System.currentTimeMillis();
         if(nowTime - BASE_TIME >= 1000) {
             // 指定FPSより遅れていればフラグを立て、戻ったら下ろす
-            if(COUNTER <= FPS * 0.833f && !HIGH_LOAD) {
+            if(!HIGH_LOAD && COUNTER <= FPS * 0.833f) {
                 HIGH_LOAD = true;
-            } else if(COUNTER > FPS * 0.9f && HIGH_LOAD) {
+            } else if(HIGH_LOAD && COUNTER > FPS * 0.9f) {
                 HIGH_LOAD = false;
             }
             
@@ -620,6 +593,7 @@ public class Ecosystem extends JPanel implements ActionListener, Runnable, Mouse
             baseTime = System.currentTimeMillis();
         }
     }
+    
     
     public static void main(String[] args) {
         // TODO 自動生成されたメソッド・スタブ
